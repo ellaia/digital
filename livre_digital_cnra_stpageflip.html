@@ -610,6 +610,10 @@
                 padding: 0.3rem 0.6rem;
                 min-width: 80px;
             }
+            .flip-book {
+                width: 100% !important;
+                height: auto;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1240,7 +1244,7 @@
             
             pageFlip = new St.PageFlip(document.getElementById('book'), {
                 width: 550, height: 733,
-                size: 'stretch', minWidth: 315, maxWidth: 1000,
+                size: 'stretch', minWidth: 280, maxWidth: 900,
                 minHeight: 420, maxHeight: 1350,
                 maxShadowOpacity: 0.7, showCover: true,
                 mobileScrollSupport: false, flippingTime: 1000,
