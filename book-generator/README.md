@@ -29,6 +29,8 @@ book-generator/
 └── README.md
 ```
 
+Le générateur extrait les styles et scripts du fichier `livre_digital_cnra_stpageflip.html` situé à la racine du dépôt. Si ce fichier est absent, `index.html` est utilisé en repli. À défaut, un modèle interne minimal sera employé.
+
 ## 🎯 Usage rapide
 
 ### 1. Configurer le livre

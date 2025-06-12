@@ -321,7 +321,20 @@ class BookGenerator {
 
     async loadOriginalHtml() {
         const originalPath = path.join(__dirname, '..', 'livre_digital_cnra_stpageflip.html');
-        return await fs.readFile(originalPath, 'utf8');
+        const fallbackPath = path.join(__dirname, '..', 'index.html');
+
+        let fileToLoad = originalPath;
+        if (!await fs.pathExists(originalPath)) {
+            console.warn(chalk.yellow('⚠️  livre_digital_cnra_stpageflip.html introuvable, utilisation du fichier index.html'));
+            if (await fs.pathExists(fallbackPath)) {
+                fileToLoad = fallbackPath;
+            } else {
+                console.warn(chalk.yellow('⚠️  Aucun fichier HTML de base trouvé, utilisation d\'un modèle minimal'));
+                return this.createDefaultTemplate();
+            }
+        }
+
+        return await fs.readFile(fileToLoad, 'utf8');
     }
 
     extractStyles(html) {
