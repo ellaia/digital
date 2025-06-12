@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histoire de la CNRA - Livre Digital avec StPageFlip</title>
+    
+    <!-- Métadonnées SEO et accessibilité -->
+    <meta name="description" content="Livre digital interactif retraçant 65 ans d'histoire de la Caisse Nationale de Retraites et d'Assurances (CNRA) du Maroc, de 1959 à 2024.">
+    <meta name="keywords" content="CNRA, Caisse Nationale de Retraites, Assurances, Maroc, CDG, RCAR, Histoire institutionnelle">
+    <meta name="author" content="CDG - Caisse de Dépôt et de Gestion">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Histoire de la CNRA - 65 ans de solidarité nationale">
+    <meta property="og:description" content="Découvrez l'histoire institutionnelle de la CNRA à travers un livre digital interactif avec effet de tournage de pages réaliste.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#323e48">
+    
+    <!-- Google Fonts pour une meilleure typographie -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+    
+    <!-- StPageFlip CSS -->
+    <style>
+        /* ===== VARIABLES CSS INSTITUTIONNELLES ===== */
+        :root {
+            --primary-color: #323e48;
+            --secondary-color: #638c1c;
+            --tertiary-color: #d8e0e5;
+            --primary-light: #4a5660;
+            --secondary-light: #7ba821;
+            --tertiary-dark: #c1cdd4;
+            --font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-secondary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: linear-gradient(135deg, var(--tertiary-color) 0%, #e8eff2 100%);
+            margin: 0;
+            padding: 20px;
+            color: var(--primary-color);
+        }
+
+        .book-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        /* ===== STYLES POUR STPAGEFLIP ===== */
+        .flip-book {
+            box-shadow: 0 0 20px 0 rgba(50, 62, 72, 0.4);
+            display: none; /* Sera montré par StPageFlip */
+        }
+
+        /* ===== MODE PORTRAIT ===== */
+        .portrait-container {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(50, 62, 72, 0.15);
+            min-height: 80vh;
+        }
+
+        .portrait-container.active {
+            display: block;
+        }
+
+        .portrait-page {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border-bottom: 2px solid var(--tertiary-color);
+            page-break-after: always;
+        }
+
+        .portrait-page:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .portrait-page h2 {
+            border-top: 3px solid var(--secondary-color);
+            padding-top: 1rem;
+            margin-top: 0;
+        }
+
+        /* Styles spéciaux pour la page de couverture en mode portrait */
+        .portrait-page:first-child {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            padding: 2rem 1rem;
+        }
+
+        .portrait-page:first-child h1 {
+            color: white;
+            border-bottom: 2px solid var(--secondary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .portrait-page:first-child h2 {
+            color: white;
+            border: none;
+            padding-top: 0;
+            margin-top: 1rem;
+        }
+
+        .portrait-page:first-child .subtitle {
+            font-size: 1rem;
+            color: var(--secondary-color);
+            margin: 1rem 0;
+            font-style: italic;
+        }
+
+        /* Navigation pour mode portrait */
+        .portrait-navigation {
+            position: sticky;
+            bottom: 20px;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .portrait-nav-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+            box-shadow: 0 4px 12px rgba(50, 62, 72, 0.3);
+        }
+
+        .portrait-nav-button:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(50, 62, 72, 0.4);
+        }
+
+        .portrait-nav-button:disabled {
+            background: var(--tertiary-color);
+            color: var(--tertiary-dark);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .page {
+            padding: 40px;
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--tertiary-dark);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .page-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        /* ===== TYPOGRAPHIE ===== */
+        .page h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .page h2 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1rem 0 0.8rem 0;
+            border-left: 3px solid var(--secondary-color);
+            padding-left: 1rem;
+            line-height: 1.3;
+        }
+
+        .page h3 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0.8rem 0 0.6rem 0;
+            line-height: 1.3;
+        }
+
+        .page p {
+            margin-bottom: 0.6rem;
+            text-align: justify;
+            line-height: 1.4;
+            font-size: 0.95rem;
+            hyphens: auto;
+        }
+
+        .page ul {
+            margin: 0.6rem 0 0.6rem 1.8rem;
+            font-size: 0.95rem;
+        }
+
+        .page li {
+            margin-bottom: 0.3rem;
+            line-height: 1.4;
+        }
+
+        .page strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* ===== INDICATEUR DE PROGRESSION - POP-UP DRAGGABLE ===== */
+        .progress-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255,255,255,0.98);
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(50, 62, 72, 0.15), 0 2px 8px rgba(0,0,0,0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.8);
+            font-family: var(--font-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            cursor: move;
+            user-select: none;
+            min-width: 220px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-container:hover {
+            box-shadow: 0 12px 40px rgba(50, 62, 72, 0.2), 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .progress-container.dragging {
+            cursor: grabbing;
+            transform: rotate(2deg) scale(1.02);
+            box-shadow: 0 16px 48px rgba(50, 62, 72, 0.25), 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .progress-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 180px;
+            height: 4px;
+            background: var(--tertiary-color);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--secondary-light));
+            border-radius: 2px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--primary-light);
+            font-weight: 500;
+        }
+
+        .controls-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            padding-top: 0.3rem;
+            border-top: 1px solid rgba(200, 200, 200, 0.3);
+        }
+
+        .sommaire-button {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-secondary);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .sommaire-button:hover {
+            background: var(--secondary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(99, 140, 28, 0.3);
+        }
+
+        .sommaire-button:active {
+            transform: translateY(0);
+        }
+
+        .reading-mode {
+            display: flex;
+            align-items: center;
+        }
+
+        .mode-selector {
+            background: var(--tertiary-color);
+            color: var(--primary-color);
+            border: 1px solid var(--tertiary-dark);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-secondary);
+            font-weight: 500;
+            white-space: nowrap;
+            min-width: 90px;
+        }
+
+        .mode-selector:hover {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .mode-selector:focus {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        .zoom-controls {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .zoom-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-secondary);
+            font-weight: 500;
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .zoom-button:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(50, 62, 72, 0.3);
+        }
+
+        .zoom-button:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--tertiary-color);
+            border-top: 4px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== ÉLÉMENTS SPÉCIAUX ===== */
+        .media-placeholder {
+            background: var(--tertiary-color);
+            border: 1px solid var(--tertiary-dark);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+            color: var(--secondary-color);
+            font-style: italic;
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+
+        .video-placeholder {
+            background: linear-gradient(135deg, var(--tertiary-color), #f0f4f7);
+        }
+
+        .video-placeholder::before {
+            content: '▶';
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+            display: block;
+            margin-bottom: 0.8rem;
+        }
+
+        .timeline {
+            margin: 1rem 0;
+            padding: 1.2rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 0.8rem;
+            align-items: flex-start;
+        }
+
+        .timeline-year {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-width: 65px;
+            text-align: center;
+            margin-right: 1rem;
+        }
+
+        .timeline-content {
+            flex: 1;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        blockquote {
+            border-left: 4px solid var(--secondary-color);
+            padding: 1.2rem;
+            font-style: italic;
+            margin: 1rem 0;
+            color: var(--primary-light);
+            background: rgba(216, 224, 229, 0.3);
+            border-radius: 6px;
+            line-height: 1.4;
+        }
+
+        /* ===== PAGE SPÉCIFIQUES ===== */
+        .page.--left {
+            border-right: 0;
+            box-shadow: inset -7px 0 30px -7px rgba(0, 0, 0, 0.4);
+        }
+
+        .page.--right {
+            border-left: 0;
+            box-shadow: inset 7px 0 30px -7px rgba(0, 0, 0, 0.4);
+        }
+
+        .page.hard {
+            background-color: var(--tertiary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .page-cover {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .page-cover h1 {
+            color: white;
+            border-bottom-color: var(--secondary-color);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .page-cover .subtitle {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        /* ===== LECTEUR VIDÉO ===== */
+        .video-container {
+            background: var(--tertiary-color);
+            border: 1px solid var(--tertiary-dark);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .institutional-video {
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            border-radius: 8px;
+            background: #000;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .institutional-video::-webkit-media-controls-panel {
+            background-color: rgba(50, 62, 72, 0.9);
+        }
+
+        .institutional-video::-webkit-media-controls-play-button,
+        .institutional-video::-webkit-media-controls-volume-slider {
+            filter: brightness(0) saturate(100%) invert(41%) sepia(15%) saturate(567%) hue-rotate(162deg) brightness(97%) contrast(90%);
+        }
+
+        .video-fallback {
+            text-align: center;
+            color: var(--secondary-color);
+            font-style: italic;
+            font-size: 0.9rem;
+            line-height: 1.3;
+            padding: 2rem;
+        }
+
+        .video-fallback p:first-child {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Support pour différents navigateurs */
+        .institutional-video:focus {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .institutional-video {
+                max-height: 180px;
+            }
+            
+            .video-container {
+                padding: 0.8rem;
+                margin: 0.8rem 0;
+            }
+
+            .portrait-container {
+                padding: 15px;
+                margin: 10px;
+                border-radius: 8px;
+            }
+
+            .portrait-page {
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .portrait-nav-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+            }
+
+            /* Masquer le sélecteur de mode sur mobile */
+            .reading-mode {
+                display: none;
+            }
+            
+            .flip-book {
+                width: 100% !important;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .institutional-video {
+                max-height: 150px;
+            }
+            
+            .video-container {
+                padding: 0.6rem;
+                margin: 0.6rem 0;
+            }
+            
+            .video-fallback {
+                padding: 1.5rem;
+                font-size: 0.85rem;
+            }
+
+            .portrait-container {
+                padding: 10px;
+                margin: 5px;
+                min-height: 90vh;
+            }
+
+            .portrait-page {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .portrait-nav-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+                margin: 0 0.3rem;
+            }
+
+            .controls-section {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: stretch;
+            }
+
+            .controls-section > * {
+                width: 100%;
+                text-align: center;
+            }
+
+            .zoom-controls {
+                justify-content: center;
+            }
+
+            /* Masquer aussi le sélecteur de mode sur très petits écrans */
+            .reading-mode {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Chargement -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div style="color: var(--primary-color); font-weight: 600;">Chargement du livre digital...</div>
+    </div>
+
+    <!-- Indicateur de progression - Pop-up draggable -->
+    <div class="progress-container" id="progressContainer" style="display: none;">
+        <div class="progress-info">
+            <div class="progress-text" id="progressText">Page 1 / 17</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        <div class="controls-section">
+            <button class="sommaire-button" onclick="goToHome()" aria-label="Retourner au sommaire" title="Retour au sommaire">
+                Sommaire
+            </button>
+            <div class="reading-mode">
+                <select class="mode-selector" id="readingMode" onchange="changeReadingMode()" aria-label="Mode de lecture">
+                    <option value="book">Livre</option>
+                    <option value="portrait">Portrait</option>
+                </select>
+            </div>
+            <div class="zoom-controls">
+                <button class="zoom-button" onclick="zoomOut()" aria-label="Dézoomer" title="Dézoomer">−</button>
+                <button class="zoom-button" onclick="zoomIn()" aria-label="Zoomer" title="Zoomer">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteneur principal -->
+    <div class="book-container">
+        <!-- Le livre sera créé ici par StPageFlip -->
+        <div class="flip-book" id="book" role="main" aria-label="Livre digital interactif sur l'histoire de la CNRA">
+            
+            <!-- Page de couverture -->
+            <div class="page page-cover hard" data-density="hard" role="article" aria-label="Page de couverture">
+                <div class="page-content">
+                    <h1>LIVRE DIGITAL</h1>
+                    <div style="text-align: center; margin: 1.5rem 0 2rem 0;">
+                        <img src="01.jpg" alt="Logo officiel de la CNRA" style="max-width: 350px; width: 80%; height: auto; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.3);">
+                    </div>
+                    <div class="subtitle">DE LA CRÉATION DE LA CAISSE NATIONALE DE RETRAITES<br>ET D'ASSURANCES À AUJOURD'HUI</div>
+                    <div style="font-size: 1.5rem; margin-top: 2rem;">65 ans d'histoire</div>
+                    <div style="font-size: 1.2rem; margin-top: 1rem; color: var(--secondary-color);">1959 - 2024</div>
+                </div>
+            </div>
+
+            <!-- Page sommaire -->
+            <div class="page" role="article" aria-label="Sommaire du livre">
+                <div class="page-content">
+                    <h2>SOMMAIRE</h2>
+                    <nav role="navigation" aria-label="Navigation du sommaire">
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(2)"><strong>PRÉFACE</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(3)">1. <strong>INTRODUCTION</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(4)">2. <strong>VISION ET MISSION</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(5)">3. <strong>ÉMERGENCE (1959-1976)</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(6)">4. <strong>DÉVELOPPEMENT RCAR (1977-1997)</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(7)">5. <strong>DIVERSIFICATION (1984-1997)</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(8)">6. <strong>MODERNISATION (1998-2012)</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(9)">7. <strong>TRANSFORMATION DIGITALE (2003-2012)</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(10)">8. <strong>PARCOURS INSTITUTIONNEL (2001+)</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(11)">9. <strong>SERVICES NUMÉRIQUES (2012-2018)</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(12)">10. <strong>PROGRAMMES SOCIAUX (2022-2023)</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(13)">11. <strong>ENGAGEMENT DURABLE & CAP 2030</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(14)">12. <strong>INNOVATION AVANCÉE (2019-2024)</strong></div>
+                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(15)">13. <strong>L'INSTITUTION AUJOURD'HUI</strong></div>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Page 3: Préambule -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Préambule</h2>
+                    <div class="video-container">
+                        <video class="institutional-video" controls preload="metadata" poster="">
+                            <source src="FilmInstitutionnel.mp4" type="video/mp4">
+                            <div class="video-fallback">
+                                <p><strong>VIDÉO INSTITUTIONNELLE</strong><br>
+                                Histoire de la CNRA depuis 1959, archives du Maroc post-indépendance</p>
+                                <p>Votre navigateur ne supporte pas la lecture vidéo HTML5. Veuillez mettre à jour votre navigateur.</p>
+                            </div>
+                        </video>
+                    </div>
+                    <p>Depuis plus de six décennies, la Caisse Nationale de Retraites et d'Assurances (CNRA) s'inscrit au cœur de la construction du système national de prévoyance sociale du Maroc.</p>
+                    <p>Son histoire est étroitement liée aux grandes transformations économiques et sociales qu'a connues le Royaume, traduisant l'engagement constant de l'État en faveur de la protection des individus et du renforcement de la solidarité nationale.</p>
+                    <h3>Trois intentions essentielles</h3>
+                    <p><strong>Célébrer une trajectoire institutionnelle</strong> - La CNRA a su, dès ses origines, répondre aux besoins d'une société en mutation.</p>
+                    <p><strong>Préserver une mémoire collective</strong> - Ce livre constitue un témoignage vivant de cette mémoire institutionnelle.</p>
+                    <p><strong>Mettre en lumière les valeurs fondatrices</strong> - L'équité, le sens du service public, la responsabilité, l'intégrité et la solidarité.</p>
+                </div>
+            </div>
+
+            <!-- Page 4: Introduction -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Introduction</h2>
+                    <h3>Contexte historique de création</h3>
+                    <div class="media-placeholder">
+                        Panorama du Maroc des années 1960 - Construction de l'État moderne post-indépendance
+                    </div>
+                    <p>Au lendemain de l'indépendance, le Maroc s'est trouvé face à un immense chantier : construire un État moderne, unifier le territoire national et poser les fondations d'un développement économique et social autonome. Cette période de reconstruction fut marquée par une volonté politique forte de moderniser les institutions publiques et d'améliorer les conditions de vie des citoyens marocains.</p>
+                    <p>L'un des défis majeurs consistait à réorienter les structures économiques héritées de plusieurs décennies de colonisation, en leur insufflant une dynamique propre, fondée sur des mécanismes internes de création de richesse, d'accumulation de capital et de progrès durable. Il s'agissait de passer d'une économie administrée et dépendante à une économie nationale capable de générer ses propres leviers de croissance.</p>
+                    <h3>Création de la CDG et de la CNRA</h3>
+                    <p>Dans cette perspective, et afin de consolider la souveraineté nationale tout en stimulant l'investissement, l'État marocain procéda à la création de la Caisse de Dépôt et de Gestion (CDG). Sa mission initiale était double :</p>
+                    <ul>
+                        <li><strong>Sécuriser l'épargne réglementée</strong> provenant des réserves de sécurité sociale</li>
+                        <li><strong>Orienter les ressources collectées</strong> vers des investissements structurants pour l'économie et la société</li>
+                    </ul>
+                    <p>Le champ d'action confié à la CDG couvrait notamment la gestion des dépôts issus des réserves de la sécurité sociale, des fonds collectés par la Caisse Nationale de Sécurité Sociale (CNSS), de la Caisse d'Épargne Nationale (CEN), des professions juridiques (notaires, secrétaires greffiers, avocats...), ainsi que des consignations administratives, judiciaires et des cautionnements.</p>
+                    <p><strong>27 octobre 1959</strong> : Création officielle de la CNRA, confiée à la gestion de la CDG, ainsi que du Régime Collectif d'Allocation de Retraite (RCAR), institué par la CNRA en 1977.</p>
+                </div>
+            </div>
+
+            <!-- Page 5: Vision et Mission -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Vision, Mission et Valeurs</h2>
+                    <div class="media-placeholder">
+                        Infographie - Mission de la Branche Épargne-Prévoyance avec trois piliers
+                    </div>
+                    <h3>Notre Mission</h3>
+                    <p>La Branche Épargne-Prévoyance de la Caisse de Dépôt et de Gestion incarne pleinement la vocation de tiers de confiance du Groupe CDG, conformément à ses textes organiques et réglementaires, ainsi qu'à ceux des organismes qui lui sont confiés : la Caisse Nationale de Retraites et d'Assurances (CNRA) et le Régime Collectif d'Allocation de Retraite (RCAR).</p>
+                    <p>Dans ce cadre, la Branche Épargne-Prévoyance exerce ses missions autour de trois grandes expertises complémentaires :</p>
+                    <ul>
+                        <li><strong>La mobilisation de l'épargne</strong>, en sécurisant et valorisant les ressources collectées au profit de la collectivité</li>
+                        <li><strong>La gestion de la prévoyance et des retraites</strong>, en administrant des régimes sociaux au service des assurés et de la solidarité nationale</li>
+                        <li><strong>La gestion des assurances</strong>, en assurant la sécurisation juridique et financière des droits sociaux des bénéficiaires</li>
+                    </ul>
+                    <h3>Notre Vision</h3>
+                    <p>Consolider le positionnement de tiers de confiance et affirmer le rôle de gestionnaire de référence des régimes de retraite, des fonds de solidarité et de l'épargne institutionnelle au service de l'intérêt général.</p>
+                    <p>Cette vision s'appuie sur un engagement constant : garantir à la fois la qualité des services rendus, l'intégrité des gestions confiées et l'accompagnement des politiques publiques de développement social.</p>
+                    <h3>Nos Valeurs Fondatrices</h3>
+                    <p>Depuis sa création, la CNRA, sous la gestion de la Caisse de Dépôt et de Gestion, s'est construite autour de valeurs fondatrices qui inspirent chacune de ses actions et orientent ses choix stratégiques :</p>
+                    <ul>
+                        <li><strong>Le sens du service public et de la responsabilité collective</strong>, qui engage chaque collaborateur dans une mission utile à la collectivité nationale</li>
+                        <li><strong>L'éthique et l'intégrité</strong>, garantes de la transparence et de la solidité juridique des engagements pris au nom des pouvoirs publics</li>
+                        <li><strong>L'excellence opérationnelle</strong>, traduite par la recherche permanente de performance, d'efficience et de qualité de service</li>
+                        <li><strong>La solidarité et l'inclusion</strong>, piliers du modèle social que l'institution contribue à développer et à élargir depuis plus de soixante ans</li>
+                        <li><strong>La confiance partagée</strong>, qui s'inscrit dans l'ADN même de la CDG et qui confère à la CNRA un rôle singulier de tiers de confiance vis-à-vis de l'État et des citoyens</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page 6: Émergence -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Émergence de la CNRA (1959-1976)</h2>
+                    <h3>Les premiers objectifs et le rôle fondateur</h3>
+                    <div class="media-placeholder">
+                        Photo en noir et blanc des premiers bureaux de la CNRA années 1960, employés en costume, machines à écrire
+                    </div>
+                    <p>Créée dans les premières années qui ont suivi l'indépendance, la Caisse Nationale de Retraites et d'Assurances (CNRA) s'est vue confier des missions essentielles pour accompagner la construction progressive du système marocain de prévoyance sociale. Dès l'origine, la CNRA s'est imposée comme un acteur pivot de la protection sociale, avec pour première mission la gestion des rentes versées aux victimes d'accidents du travail (AT) et d'accidents de la circulation, ainsi qu'à leurs ayants droit.</p>
+                    <p>À travers ce mandat, l'institution répondait à une préoccupation sociale majeure : garantir une indemnisation régulière et sécurisée aux personnes victimes d'accidents professionnels, les protégeant ainsi des conséquences financières souvent lourdes qui pouvaient découler de tels sinistres.</p>
+                    <p>Peu à peu, son périmètre d'intervention s'est élargi afin d'intégrer la couverture du risque vieillesse, à travers la mise en place de régimes de retraite complémentaires.</p>
+                    <h3>1959-1976 : Les premières années d'engagement</h3>
+                    <p>Dans un contexte national encore en reconstruction, la CNRA va très rapidement s'affirmer comme l'un des premiers piliers institutionnels de la protection sociale au Maroc. En versant des rentes trimestrielles aux travailleurs ayant subi des accidents professionnels, la CNRA garantit non seulement un filet de sécurité financière, mais contribue également à préserver la dignité des familles confrontées à des situations de vulnérabilité.</p>
+                    <p>Mais le rôle de la CNRA ne se limite pas à la simple gestion des flux financiers. Dès ses débuts, elle s'impose également comme un gestionnaire rigoureux des capitaux constitutifs provenant des compagnies d'assurances. À travers la fiabilité de ses processus, la transparence de ses pratiques et la solidité juridique de sa gestion, l'institution s'érige en véritable référence du système naissant de prévoyance sociale.</p>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">1959</div>
+                            <div class="timeline-content">Création officielle (27 octobre) - Premières missions AT et AC</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1960-65</div>
+                            <div class="timeline-content">Structuration processus - Rentes trimestrielles</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1966-70</div>
+                            <div class="timeline-content">Consolidation expertise - Gestion capitaux assurances</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1971-76</div>
+                            <div class="timeline-content">Réflexions élargissement - Préparation futures missions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 7: Développement RCAR -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Développement des activités (1977-1997)</h2>
+                    <h3>1977 : Création du RCAR</h3>
+                    <p>L'année 1977 constitue un jalon majeur dans l'évolution de la prévoyance sociale au Maroc, avec la création du Régime Collectif d'Allocation de Retraite (RCAR), confié à la gestion de la CNRA.</p>
+                    <div class="media-placeholder">
+                        Infographie du RCAR - Catégories de bénéficiaires et couverture sociale
+                    </div>
+                    <h3>Public concerné par le RCAR</h3>
+                    <ul>
+                        <li>Personnel non titulaire de l'État et des collectivités locales</li>
+                        <li>Personnels contractuels, temporaires, occasionnels et journaliers</li>
+                        <li>Personnels d'établissements soumis au contrôle financier de l'État</li>
+                        <li>Salariés d'organismes bénéficiant du soutien financier de l'État</li>
+                    </ul>
+                    <p><strong>Configuration initiale</strong> : Régime général obligatoire garantissant un revenu de base à l'âge de la retraite.</p>
+                    <p><strong>1993 - Extension majeure</strong> : Introduction d'un régime complémentaire facultatif pour les affiliés dépassant un certain seuil de rémunération.</p>
+                </div>
+            </div>
+
+            <!-- Page 8: Diversification -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Stratégie de diversification (1984-1997)</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">1984</div>
+                            <div class="timeline-content">Gestion des victimes mineures d'accidents de la circulation</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1988</div>
+                            <div class="timeline-content">Lancement du RECORE - Régime Complémentaire de Retraite</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1991</div>
+                            <div class="timeline-content">Création du FRAM - Fonds Retraite Avocats du Maroc</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1995</div>
+                            <div class="timeline-content">Système "Addamane Al Hirafi" pour commerçants et artisans</div>
+                        </div>
+                    </div>
+                    
+                    <h3>Implantation territoriale stratégique</h3>
+                    <div class="media-placeholder">
+                        Carte du Maroc - Implantation des 4 agences CNRA et zones de couverture
+                    </div>
+                    <p>Ouverture d'agences régionales stratégiquement implantées :</p>
+                    <ul>
+                        <li><strong>Rabat</strong> - Capitale administrative</li>
+                        <li><strong>Casablanca</strong> - Capitale économique</li>
+                        <li><strong>Laâyoune</strong> - Présence au sud du Royaume</li>
+                        <li><strong>Jerada</strong> - Accompagnement des bénéficiaires AT/MP</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page 9: Modernisation -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Modernisation et transformation (1998-2012)</h2>
+                    <div class="video-placeholder">
+                        <strong>VIDÉO TRANSFORMATION</strong><br>
+                        Évolution des systèmes informatiques, témoignages d'employés et d'usagers
+                    </div>
+                    <p>La modernisation du service public marocain représente, depuis la fin des années 1990, un enjeu majeur dans la consolidation de la compétitivité et du développement national. Consciente de cette dynamique et fidèle à sa vocation de service au citoyen, la CNRA s'est engagée dès 1998 dans une transformation en profondeur de son organisation et de ses modes de gestion.</p>
+                    <p>L'objectif de cette mutation est clair : positionner durablement l'institution comme un acteur de référence de la prévoyance sociale moderne et performante, au service des citoyens et des pouvoirs publics.</p>
+                    <h3>Axes stratégiques identifiés</h3>
+                    <p>Dès les premières étapes de ce chantier ambitieux, plusieurs axes structurants ont été identifiés :</p>
+                    <ul>
+                        <li>Simplification et fluidification des procédures internes</li>
+                        <li>Digitalisation et virtualisation des services</li>
+                        <li>Consolidation de l'orientation client</li>
+                        <li>Développement et valorisation des compétences humaines</li>
+                        <li>Renforcement de la gouvernance et des dispositifs de contrôle</li>
+                        <li>Ancrage de la transparence et de l'éthique de gestion dans l'ensemble des processus</li>
+                    </ul>
+                    <h3>Excellence opérationnelle et qualité</h3>
+                    <p>Après plus de quarante années d'expérience dans la gestion de régimes diversifiés, la CNRA initie à partir de 2003 une révision de son business model en profondeur. Cette évolution stratégique repose sur un socle de principes issus du management par la qualité totale (TQM), s'appuyant notamment sur :</p>
+                    <ul>
+                        <li><strong>Optimisation continue</strong> des processus internes</li>
+                        <li><strong>Modernisation des pratiques</strong> de gestion RH</li>
+                        <li><strong>Gouvernance renforcée</strong> autour d'indicateurs de performance</li>
+                        <li><strong>Approche centrée</strong> sur l'écoute et la satisfaction des bénéficiaires</li>
+                    </ul>
+                    <p>Pour piloter cette montée en puissance, la CNRA déploie des outils modernes de gestion stratégique, en particulier le Balanced Scorecard pour la mesure de la performance globale et le Program Management Office (PMO) pour la gouvernance de ses projets structurants.</p>
+                </div>
+            </div>
+
+            <!-- Page 10: Transformation digitale -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Consolidation de la transformation digitale (2003-2012)</h2>
+                    <div class="media-placeholder">
+                        Collage évolution interfaces : écrans DOS années 1990 vers solutions modernes
+                    </div>
+                    <p>Dans la continuité de son programme de modernisation, la CNRA franchit une nouvelle étape déterminante avec l'introduction progressive de solutions numériques avancées, visant à fluidifier ses opérations et à améliorer durablement l'expérience de ses clients.</p>
+                    <p>L'intégration de la Gestion Électronique des Documents (GED) et la mise en œuvre de circuits de traitement automatisés via le workflow constituent un tournant majeur dans la refonte des processus internes. Cette dématérialisation progressive des flux permet non seulement de simplifier les démarches administratives, mais également d'optimiser le traitement des dossiers, d'en améliorer la traçabilité et de renforcer la rapidité des services rendus.</p>
+                    <h3>Solutions numériques avancées</h3>
+                    <ul>
+                        <li><strong>GED</strong> - Gestion Électronique des Documents</li>
+                        <li><strong>Workflow automatisés</strong> - Circuits de traitement optimisés</li>
+                        <li><strong>Espace client en ligne</strong> pour les adhérents RECORE</li>
+                        <li><strong>Certifications ISO 9001</strong> - Standards internationaux de qualité</li>
+                    </ul>
+                    <h3>Renforcement continu du système qualité</h3>
+                    <p>Tout au long de ces années, la CNRA poursuit une politique rigoureuse de certification et d'amélioration continue. Parmi les principales avancées réalisées : le perfectionnement constant du système d'information, l'obtention progressive des certifications ISO 9001 V 2000, d'abord sur les activités des rentes, puis sur le régime RECORE, et la dématérialisation étendue des processus.</p>
+                    <p><strong>2007</strong> : Déploiement du système d'information IRADAT, véritable colonne vertébrale opérationnelle permettant l'automatisation du traitement des rentes et l'amélioration de la sécurisation des informations sensibles, tout en intégrant parfaitement la GED.</p>
+                    <h3>Résultats de performance</h3>
+                    <p>Les résultats de ces transformations se traduisent par des indicateurs particulièrement significatifs : <strong>un taux de satisfaction des affiliés RECORE de 92%</strong>, et <strong>un taux de satisfaction de 79% pour les bénéficiaires des rentes AT et AC</strong>, confirmant l'impact positif des actions de modernisation.</p>
+                    <p>En 2012, une étape décisive est franchie avec le lancement de la nouvelle plateforme AGILYS+, conçue selon les meilleurs standards internationaux. Alliant puissance technologique et flexibilité organisationnelle, elle permet à la CNRA de gérer des volumes d'activité croissants, tout en maintenant une qualité de service optimale.</p>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">2003</div>
+                            <div class="timeline-content">Début transformation digitale - Introduction GED</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2004</div>
+                            <div class="timeline-content">Certification ISO 9001 activité Rentes</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2007</div>
+                            <div class="timeline-content">Déploiement IRADAT - Automatisation rentes</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2009</div>
+                            <div class="timeline-content">Renouvellement certifications - Plan continuité</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2012</div>
+                            <div class="timeline-content">Lancement AGILYS+ - Standards internationaux</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 11: Renforcement institutionnel -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Parcours de l'institution à partir de 2001</h2>
+                    <h3>Diversification des missions et accompagnement des pouvoirs publics</h3>
+                    <p>Depuis 2001, la CNRA a continuellement élargi son périmètre d'intervention, consolidant sa position de tiers de confiance au service des politiques publiques et de la solidarité nationale.</p>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">2001</div>
+                            <div class="timeline-content">Fonds Marocain de Placement - Indemnisation soldats du Golan</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2002-04</div>
+                            <div class="timeline-content">Conventions organismes publics (ONCF, DRAPOR, ODEP)</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2004</div>
+                            <div class="timeline-content">Contentieux Charbonnages du Maroc</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2010</div>
+                            <div class="timeline-content">Fonds d'Entraide Familiale - Mères délaissées</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2022</div>
+                            <div class="timeline-content">Programme Tayssir - Soutien à la scolarisation</div>
+                        </div>
+                    </div>
+                    
+                    <h3>Nouveaux mandats sociaux (2022-2024)</h3>
+                    <p>La période récente est marquée par l'attribution de nouveaux mandats stratégiques à la CNRA, confirmant sa capacité d'adaptation et son rôle central dans la politique sociale nationale.</p>
+                </div>
+            </div>
+
+            <!-- Page 12: Services numériques et innovation -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Accélération des services numériques (2012-2018)</h2>
+                    <h3>Premiers services mobiles : vers un accès simplifié</h3>
+                    <div class="media-placeholder">
+                        Applications SMART CNRA et SMART RCAR - Interfaces mobiles et fonctionnalités
+                    </div>
+                    <p>En 2013, la CNRA lance deux applications mobiles pionnières, SMART CNRA et SMART RCAR, interconnectées au système CRM. Ces nouveaux outils offrent aux affiliés un accès permanent et sécurisé à une large gamme de e-services :</p>
+                    <ul>
+                        <li>Consultation des situations de compte</li>
+                        <li>Simulations de droits</li>
+                        <li>Demandes d'attestations ou d'informations</li>
+                        <li>Dépôt de réclamations</li>
+                    </ul>
+                    
+                    <h3>Prix d'excellence e-Mtiaz 2015</h3>
+                    <p>Cette démarche d'innovation et de qualité est couronnée par l'obtention du prix d'excellence e-Mtiaz, dans les catégories « centre d'appel » et « e-contenu », attestant de la performance de l'écosystème numérique déployé.</p>
+                    
+                    <h3>Certifications qualité 2016</h3>
+                    <ul>
+                        <li><strong>ISO 9001 version 2015</strong> - Système de Management de la Qualité complet</li>
+                        <li><strong>OHSAS 18001 version 2007</strong> - Système Santé et Sécurité au Travail</li>
+                    </ul>
+                    <p>Obtenues sans non-conformité ni réserve, ces certifications traduisent la maturité du modèle de gouvernance et l'ancrage de l'orientation client.</p>
+                </div>
+            </div>
+
+            <!-- Page 13: Programmes sociaux récents -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>2022-2023 : Acteur stratégique des politiques publiques</h2>
+                    <h3>Programme Tayssir (2022)</h3>
+                    <div class="media-placeholder">
+                        Programme Tayssir - Processus de distribution, bénéficiaires, impact social
+                    </div>
+                    <p>En 2022, la CNRA se voit confier la gestion opérationnelle du programme « Tayssir », destiné à soutenir la scolarisation des enfants issus de familles défavorisées et à lutter contre la déperdition scolaire.</p>
+                    
+                    <h3>Trois nouveaux programmes majeurs (2023)</h3>
+                    <p>Dans le cadre du déploiement du chantier royal d'élargissement de la protection sociale, la CNRA pilote :</p>
+                    <ul>
+                        <li><strong>Aides Sociales Directes (ASD)</strong> - Co-gestion avec la CNSS pour les familles en situation précaire</li>
+                        <li><strong>Aide au Logement (Daam Sakane)</strong> - Soutien aux classes moyennes et ménages à revenus modestes</li>
+                        <li><strong>Fonds Séisme El Haouz</strong> - Programme d'urgence de réhabilitation et reconstruction</li>
+                    </ul>
+                    
+                    <h3>FSEC 2024</h3>
+                    <p><strong>Fonds de Solidarité contre les Événements Catastrophiques</strong> : En 2024, nouveau mandat pour l'indemnisation des victimes d'événements catastrophiques non couverts.</p>
+                    
+                    <p>Ces missions confirment le rôle central de la CNRA comme tiers de confiance et partenaire privilégié de l'État dans la conduite des réformes sociales.</p>
+                </div>
+            </div>
+
+            <!-- Page 14: Engagement durable et vision 2030 -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Engagement durable et impact sociétal</h2>
+                    <h3>Un engagement structurant en faveur du développement durable</h3>
+                    <div class="media-placeholder">
+                        Infographie développement durable - 3 piliers économique, social, environnemental
+                    </div>
+                    <p>Sous l'impulsion de Sa Majesté le Roi Mohammed VI, le Maroc a inscrit le développement durable au cœur de son modèle de croissance. La CDG et la CNRA participent activement à cette démarche.</p>
+                    
+                    <blockquote>
+                        "Pour Nous, le développement se fonde sur la complémentarité et l'équilibre entre les dimensions économique, sociale et environnementale..."
+                        <footer>- Sa Majesté le Roi Mohammed VI</footer>
+                    </blockquote>
+                    
+                    <h3>Plan stratégique CAP 2030</h3>
+                    <p>Le nouveau plan stratégique 2024-2030 « CAP 2030 » consacre :</p>
+                    <ul>
+                        <li><strong>Consolidation du rôle de tiers de confiance</strong> - Gestionnaire de référence des régimes de retraite</li>
+                        <li><strong>Partenaire privilégié de l'État</strong> - Accompagnement des réformes nationales</li>
+                        <li><strong>Excellence et innovation continues</strong> - Performance et création de valeur collective</li>
+                    </ul>
+                    
+                    <h3>Trois enjeux structurants</h3>
+                    <ul>
+                        <li>Réussir la transition vers une économie verte</li>
+                        <li>Accélérer la lutte contre le changement climatique</li>
+                        <li>Réduire les inégalités sociales et territoriales</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page 15: Innovation et transformation digitale avancée -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>Innovation ouverte et transformation digitale avancée (2019-2024)</h2>
+                    <h3>Prévoithon 2019 : Premier Hackathon de la Prévoyance</h3>
+                    <div class="media-placeholder">
+                        Photos du Hackathon "Prévoithon" 2019 - Équipes, prototypes, innovation collaborative
+                    </div>
+                    <p>En 2019, la CNRA organise le premier Hackathon de la Prévoyance, réunissant startups, experts métiers et collaborateurs pour concevoir de nouvelles solutions digitales.</p>
+                    
+                    <h3>Solutions d'innovation ouverte</h3>
+                    <p>Déploiement d'un ensemble d'applications numériques de nouvelle génération :</p>
+                    <ul>
+                        <li><strong>Sarout e-htiyati</strong> - Plateforme web intégrée</li>
+                        <li><strong>Chat e-htiyati</strong> - Service de messagerie instantanée</li>
+                        <li><strong>WhatsApp e-htiyati</strong> - Communication via WhatsApp Business</li>
+                        <li><strong>Allo e-htiyati</strong> - Centre d'appel intelligent</li>
+                        <li><strong>Selfie e-htiyati</strong> - Authentification biométrique</li>
+                    </ul>
+                    
+                    <h3>Système AGILYS 2.0</h3>
+                    <p>Déploiement du nouveau système d'information AGILYS 2.0, solution modulaire et évolutive capable de couvrir l'intégralité des produits de prévoyance avec une forte capacité d'adaptation aux futures extensions.</p>
+                    
+                    <h3>Résilience numérique face au COVID-19 (2020)</h3>
+                    <p>La CNRA démontre la robustesse de son modèle de gestion, maintenant la continuité intégrale de ses activités grâce à sa plateforme digitale multi-produits et ses dispositifs de gestion des risques.</p>
+                </div>
+            </div>
+
+            <!-- Page 16: L'Institution aujourd'hui et repères chronologiques -->
+            <div class="page">
+                <div class="page-content">
+                    <h2>La CNRA aujourd'hui : 65 ans d'histoire et d'innovations</h2>
+                    <h3>Portefeuille actuel</h3>
+                    <ul>
+                        <li><strong>RCAR</strong> - Régime Collectif d'Allocation de Retraite</li>
+                        <li><strong>RECORE</strong> - Régime Complémentaire de Retraite</li>
+                        <li><strong>FRAM</strong> - Fonds Retraite Avocats du Maroc</li>
+                        <li><strong>Programme Tayssir</strong> - Soutien à la scolarisation</li>
+                        <li><strong>Aides Sociales Directes</strong> - Protection des familles vulnérables</li>
+                        <li><strong>Aide au Logement</strong> - Soutien aux classes moyennes</li>
+                        <li><strong>Fonds Séisme El Haouz</strong> - Reconstruction urgente</li>
+                        <li><strong>FSEC</strong> - Solidarité événements catastrophiques</li>
+                    </ul>
+                    
+                    <h3>Repères chronologiques clés</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">1959</div>
+                            <div class="timeline-content">Création de la CDG et de la CNRA</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1977</div>
+                            <div class="timeline-content">Création du RCAR</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1988</div>
+                            <div class="timeline-content">Lancement du RECORE</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2007</div>
+                            <div class="timeline-content">Déploiement IRADAT</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2019</div>
+                            <div class="timeline-content">60ème anniversaire - Prévoithon</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2024</div>
+                            <div class="timeline-content">CAP 2030 - Nouvelle vision stratégique</div>
+                        </div>
+                    </div>
+                    
+                    <blockquote>
+                        "La CNRA confirme sa capacité à accompagner durablement l'évolution du système national de protection sociale et à proposer des modèles de gestion toujours plus performants, agiles et sécurisés."
+                    </blockquote>
+                </div>
+            </div>
+
+            <!-- Page de fin -->
+            <div class="page page-cover hard" data-density="hard">
+                <div class="page-content">
+                    <h1>FIN</h1>
+                    <div class="subtitle">65 ans au service de la solidarité nationale</div>
+                    <div style="font-size: 1.2rem; margin-top: 2rem; color: var(--secondary-color);">1959 - 2024</div>
+                    <div style="margin-top: 3rem; font-size: 1rem; color: white;">
+                        Caisse Nationale de Retraites et d'Assurances<br>
+                        Caisse de Dépôt et de Gestion
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Conteneur mode portrait -->
+    <div class="portrait-container" id="portraitContainer">
+        <div id="portraitContent">
+            <!-- Le contenu sera généré dynamiquement -->
+        </div>
+        <div class="portrait-navigation">
+            <button class="portrait-nav-button" onclick="scrollToTop()" title="Retour en haut">
+                ↑ Haut de page
+            </button>
+            <button class="portrait-nav-button" onclick="scrollToBottom()" title="Bas de page">
+                ↓ Bas de page
+            </button>
+        </div>
+    </div>
+
+    <!-- StPageFlip CDN -->
+    <script src="https://unpkg.com/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+    
+    <script>
+        let pageFlip;
+        let totalPages = 0;
+        let currentZoomLevel = 1;
+        const zoomStep = 0.2;
+        const minZoom = 0.6;
+        const maxZoom = 2.0;
+
+        // Variables pour le drag and drop du pop-up
+        let isDragging = false;
+        let currentX, currentY, initialX, initialY;
+        let xOffset = 0, yOffset = 0;
+
+        // Variables pour le mode de lecture
+        let currentReadingMode = 'book'; // 'book' ou 'portrait'
+        let portraitPages = [];
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            const loading = document.getElementById('loading');
+            const progressContainer = document.getElementById('progressContainer');
+            const modeSelector = document.getElementById('readingMode');
+            
+            // Détecter si c'est un appareil mobile via media query
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            
+            loading.style.display = 'block';
+            
+            // Si mobile, définir le mode portrait par défaut
+            if (isMobile) {
+                currentReadingMode = 'portrait';
+                if (modeSelector) {
+                    modeSelector.value = 'portrait';
+                }
+            }
+            
+            pageFlip = new St.PageFlip(document.getElementById('book'), {
+                width: 550, height: 733,
+                size: 'stretch', minWidth: 280, maxWidth: 900,
+                minHeight: 420, maxHeight: 1350,
+                maxShadowOpacity: 0.7, showCover: true,
+                mobileScrollSupport: false, flippingTime: 1000,
+                usePortrait: true, startPage: 0,
+                drawShadow: true, autoSize: true,
+                clickEventForward: true
+            });
+
+            pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+
+            pageFlip.on('flip', (e) => {
+                updateProgress();
+                pauseAllVideos();
+            });
+
+            pageFlip.on('init', (e) => {
+                totalPages = pageFlip.getPageCount();
+            });
+
+            setTimeout(() => {
+                loading.style.display = 'none';
+                totalPages = pageFlip.getPageCount();
+                
+                // Si mobile, activer directement le mode portrait
+                if (isMobile) {
+                    switchToPortraitMode();
+                } else {
+                    document.querySelector('.flip-book').style.display = 'block';
+                }
+                
+                progressContainer.style.display = 'block';
+                updateProgress();
+                updateZoomButtons();
+                initializeDraggable();
+                initializeVideoHandlers();
+            }, 1500);
+        });
+
+        // Fonctions principales
+        function updateProgress() {
+            if (currentReadingMode === 'portrait') {
+                updatePortraitProgress();
+            } else {
+                updateBookProgress();
+            }
+        }
+
+        function updateBookProgress() {
+            if (!pageFlip) return;
+            const currentPage = pageFlip.getCurrentPageIndex();
+            const progressText = document.getElementById('progressText');
+            const progressFill = document.getElementById('progressFill');
+            
+            if (progressText && progressFill) {
+                progressText.textContent = `Page ${currentPage + 1} / ${totalPages}`;
+                const progressPercent = (currentPage / (totalPages - 1)) * 100;
+                progressFill.style.width = `${Math.max(0, Math.min(100, progressPercent))}%`;
+            }
+        }
+
+        function updatePortraitProgress() {
+            const progressText = document.getElementById('progressText');
+            const progressFill = document.getElementById('progressFill');
+            
+            if (progressText && progressFill) {
+                progressText.textContent = `Mode Portrait`;
+                progressFill.style.width = '100%'; // Toujours à 100% en mode portrait
+            }
+        }
+
+        function goToPage(pageNumber) {
+            if (pageFlip) pageFlip.flip(pageNumber);
+        }
+
+        function goToHome() {
+            if (currentReadingMode === 'portrait') {
+                // En mode portrait, retourner en haut de la page
+                scrollToTop();
+            } else {
+                // En mode livre, aller au sommaire
+                if (pageFlip) pageFlip.flip(1);
+            }
+        }
+
+        // Fonctions de zoom
+        function zoomIn() {
+            if (currentReadingMode === 'portrait') return; // Pas de zoom en mode portrait
+            if (!pageFlip || currentZoomLevel >= maxZoom) return;
+            currentZoomLevel = Math.min(maxZoom, currentZoomLevel + zoomStep);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            if (currentReadingMode === 'portrait') return; // Pas de zoom en mode portrait
+            if (!pageFlip || currentZoomLevel <= minZoom) return;
+            currentZoomLevel = Math.max(minZoom, currentZoomLevel - zoomStep);
+            applyZoom();
+        }
+
+        function applyZoom() {
+            const bookElement = document.getElementById('book');
+            if (bookElement) {
+                bookElement.style.transform = `scale(${currentZoomLevel})`;
+                bookElement.style.transformOrigin = 'center center';
+                bookElement.style.transition = 'transform 0.3s ease';
+                updateZoomButtons();
+            }
+        }
+
+        function updateZoomButtons() {
+            const zoomInBtn = document.querySelector('.zoom-button[onclick="zoomIn()"]');
+            const zoomOutBtn = document.querySelector('.zoom-button[onclick="zoomOut()"]');
+            
+            const isPortrait = currentReadingMode === 'portrait';
+            
+            if (zoomInBtn) {
+                zoomInBtn.disabled = isPortrait || currentZoomLevel >= maxZoom;
+                zoomInBtn.style.opacity = (isPortrait || currentZoomLevel >= maxZoom) ? '0.5' : '1';
+                zoomInBtn.title = isPortrait ? 'Zoom non disponible en mode portrait' : 'Zoomer';
+            }
+            
+            if (zoomOutBtn) {
+                zoomOutBtn.disabled = isPortrait || currentZoomLevel <= minZoom;
+                zoomOutBtn.style.opacity = (isPortrait || currentZoomLevel <= minZoom) ? '0.5' : '1';
+                zoomOutBtn.title = isPortrait ? 'Zoom non disponible en mode portrait' : 'Dézoomer';
+            }
+        }
+
+        // Fonctions drag and drop du pop-up
+        function initializeDraggable() {
+            const progressContainer = document.getElementById('progressContainer');
+            if (!progressContainer) return;
+
+            progressContainer.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('mouseup', dragEnd);
+            progressContainer.addEventListener('touchstart', dragStart);
+            document.addEventListener('touchmove', dragMove);
+            document.addEventListener('touchend', dragEnd);
+        }
+
+        function dragStart(e) {
+            const progressContainer = document.getElementById('progressContainer');
+            if (!progressContainer) return;
+
+            if (e.type === "touchstart") {
+                initialX = e.touches[0].clientX - xOffset;
+                initialY = e.touches[0].clientY - yOffset;
+            } else {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+            }
+
+            if (e.target === progressContainer || progressContainer.contains(e.target)) {
+                isDragging = true;
+                progressContainer.classList.add('dragging');
+            }
+        }
+
+        function dragMove(e) {
+            if (isDragging) {
+                e.preventDefault();
+                const progressContainer = document.getElementById('progressContainer');
+                if (!progressContainer) return;
+
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+
+                xOffset = currentX;
+                yOffset = currentY;
+
+                const rect = progressContainer.getBoundingClientRect();
+                const maxX = window.innerWidth - rect.width - 20;
+                const maxY = window.innerHeight - rect.height - 20;
+
+                xOffset = Math.max(20 - progressContainer.offsetLeft, Math.min(maxX - progressContainer.offsetLeft, xOffset));
+                yOffset = Math.max(20 - progressContainer.offsetTop, Math.min(maxY - progressContainer.offsetTop, yOffset));
+
+                setTranslate(xOffset, yOffset, progressContainer);
+            }
+        }
+
+        function dragEnd() {
+            if (isDragging) {
+                const progressContainer = document.getElementById('progressContainer');
+                if (progressContainer) {
+                    progressContainer.classList.remove('dragging');
+                }
+                isDragging = false;
+            }
+        }
+
+        function setTranslate(xPos, yPos, el) {
+            el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+        }
+
+        // ===== GESTION VIDÉO =====
+        function pauseAllVideos() {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                if (!video.paused) {
+                    video.pause();
+                }
+            });
+        }
+
+        function initializeVideoHandlers() {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                // Gestion des erreurs de chargement
+                video.addEventListener('error', function(e) {
+                    console.warn('Erreur de chargement vidéo:', e);
+                    const fallback = this.querySelector('.video-fallback');
+                    if (fallback) {
+                        fallback.style.display = 'block';
+                    }
+                });
+
+                // Amélioration de l'accessibilité
+                video.setAttribute('aria-label', 'Vidéo institutionnelle CNRA');
+                
+                // Préchargement intelligent
+                video.addEventListener('loadedmetadata', function() {
+                    console.log('Vidéo prête:', this.src);
+                });
+            });
+        }
+
+        // ===== GESTION MODES DE LECTURE =====
+        function changeReadingMode() {
+            const modeSelector = document.getElementById('readingMode');
+            const newMode = modeSelector.value;
+            
+            if (newMode === currentReadingMode) return;
+            
+            currentReadingMode = newMode;
+            
+            if (newMode === 'portrait') {
+                switchToPortraitMode();
+            } else {
+                switchToBookMode();
+            }
+            
+            // Mettre à jour l'indicateur de progression
+            updateProgress();
+        }
+
+        function switchToPortraitMode() {
+            // Masquer le livre
+            document.querySelector('.flip-book').style.display = 'none';
+            
+            // Générer le contenu portrait
+            generatePortraitContent();
+            
+            // Afficher le conteneur portrait
+            document.getElementById('portraitContainer').classList.add('active');
+            
+            // Pause toutes les vidéos
+            pauseAllVideos();
+            
+            // Mettre à jour les boutons de zoom
+            updateZoomButtons();
+            
+            // S'assurer qu'on commence en haut de la page (page de couverture)
+            setTimeout(() => {
+                scrollToTop();
+            }, 100);
+            
+            console.log('Basculé en mode portrait');
+        }
+
+        function switchToBookMode() {
+            // Masquer le conteneur portrait
+            document.getElementById('portraitContainer').classList.remove('active');
+            
+            // Afficher le livre
+            document.querySelector('.flip-book').style.display = 'block';
+            
+            // Pause toutes les vidéos
+            pauseAllVideos();
+            
+            // Mettre à jour les boutons de zoom
+            updateZoomButtons();
+            
+            console.log('Basculé en mode livre');
+        }
+
+        function generatePortraitContent() {
+            const portraitContent = document.getElementById('portraitContent');
+            const pages = document.querySelectorAll('.page');
+            
+            let content = '';
+            
+            pages.forEach((page, index) => {
+                // Ignorer seulement la page de fin pour le mode portrait
+                if (index === pages.length - 1) return;
+                
+                const pageContent = page.querySelector('.page-content');
+                if (pageContent) {
+                    content += `
+                        <div class="portrait-page" id="portrait-page-${index}">
+                            ${pageContent.innerHTML}
+                        </div>
+                    `;
+                }
+            });
+            
+            portraitContent.innerHTML = content;
+            
+            // Réinitialiser les gestionnaires vidéo pour le nouveau contenu
+            setTimeout(() => {
+                initializeVideoHandlers();
+            }, 100);
+        }
+
+        function scrollToTop() {
+            document.getElementById('portraitContainer').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        function scrollToBottom() {
+            const portraitContainer = document.getElementById('portraitContainer');
+            portraitContainer.scrollTo({
+                top: portraitContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html> 

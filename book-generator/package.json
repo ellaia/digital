@@ -1,0 +1,36 @@
+{
+  "name": "livre-digital-generator",
+  "version": "1.0.0",
+  "description": "Générateur de livres digitaux interactifs avec effet flip-book",
+  "main": "generator.js",
+  "scripts": {
+    "build": "node generator.js",
+    "build-safe": "node generator.js --no-backup",
+    "dev": "node generator.js --watch",
+    "clean": "rm -rf output/*",
+    "help": "node generator.js --help",
+    "backup": "node backup-manager.js create",
+    "backup-list": "node backup-manager.js list",
+    "backup-restore": "node backup-manager.js restore",
+    "backup-git": "node backup-manager.js git"
+  },
+  "dependencies": {
+    "marked": "^9.1.6",
+    "mustache": "^4.2.0",
+    "fs-extra": "^11.1.1",
+    "chalk": "^4.1.2",
+    "chokidar": "^3.5.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "digital-book",
+    "flip-book",
+    "generator",
+    "markdown",
+    "interactive"
+  ],
+  "author": "CDG",
+  "license": "MIT"
+}

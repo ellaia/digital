@@ -1,0 +1,46 @@
+{
+  "book": {
+    "title": "LIVRE DIGITAL",
+    "subtitle": "DE LA CRÉATION DE LA CAISSE NATIONALE DE RETRAITES ET D'ASSURANCES À AUJOURD'HUI",
+    "cover_image": "media/01.jpg",
+    "years": "1959 - 2024",
+    "institution": "CNRA",
+    "description": "Livre digital interactif retraçant 65 ans d'histoire de la Caisse Nationale de Retraites et d'Assurances (CNRA) du Maroc, de 1959 à 2024.",
+    "author": "CDG - Caisse de Dépôt et de Gestion",
+    "anniversary": "65 ans d'histoire"
+  },
+  "theme": {
+    "primary_color": "#323e48",
+    "secondary_color": "#638c1c",
+    "tertiary_color": "#d8e0e5",
+    "primary_light": "#4a5660",
+    "secondary_light": "#7ba821",
+    "tertiary_dark": "#c1cdd4",
+    "font_primary": "Poppins",
+    "font_secondary": "Poppins"
+  },
+  "features": {
+    "video_support": true,
+    "mobile_portrait_default": true,
+    "zoom_controls": true,
+    "progress_indicator": true,
+    "draggable_controls": true,
+    "flip_animation": true,
+    "responsive_design": true
+  },
+  "layout": {
+    "page_width": 550,
+    "page_height": 733,
+    "min_width": 280,
+    "max_width": 900,
+    "min_height": 420,
+    "max_height": 1350,
+    "flip_duration": 1000
+  },
+  "content": {
+    "show_sommaire": true,
+    "show_cover": true,
+    "show_end_page": true,
+    "auto_generate_sommaire": true
+  }
+}
