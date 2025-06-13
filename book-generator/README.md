@@ -76,7 +76,8 @@ Votre contenu en **Markdown** ici...
 ```
 
 ### 3. Ajouter les médias
-Placez vos images et vidéos dans `config/content/media/`
+Placez vos images et vidéos dans `config/content/media/`.
+Lors de la génération, tout le dossier est copié automatiquement dans `output/media/`.
 
 ### 4. Générer le livre
 ```bash
@@ -150,6 +151,8 @@ subtitle: Merci de votre lecture
 type: sommaire
 title: SOMMAIRE
 ```
+Si `auto_generate_sommaire` est activé dans `config/book-config.json`, les liens
+du sommaire sont créés automatiquement d'après les pages de type `content`.
 
 ## 🛠 Commandes disponibles
 
@@ -161,6 +164,8 @@ npm run dev            # Lancer en mode watch
 npm run clean          # Nettoyer le dossier output
 npm run help           # Aide
 ```
+Si `pack_output` vaut `true` dans la configuration, un fichier `output/livre.tar.gz`
+sera également créé après la génération.
 
 Le mode `dev` surveille `config/` et `config/content/` et régénère
 automatiquement le livre à chaque modification.

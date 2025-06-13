@@ -85,6 +85,22 @@ class BookGenerator {
         return pages;
     }
 
+    validatePages(pages) {
+        const errors = [];
+        pages.forEach((page, index) => {
+            if (!page.metadata.type) {
+                errors.push(`Page ${index + 1} manquante: 'type'`);
+            }
+            if (!page.metadata.title && !['cover', 'end', 'sommaire'].includes(page.metadata.type)) {
+                errors.push(`Page ${index + 1} manquante: 'title'`);
+            }
+        });
+        if (errors.length) {
+            errors.forEach(err => console.error(chalk.red(`✗ ${err}`)));
+            throw new Error('Erreur de validation des pages');
+        }
+    }
+
     processSpecialMarkdown(content) {
         // Traitement des vidéos
         content = content.replace(/\[VIDEO: ([^|]+)(\|([^\]]+))?\]/g, (match, src, _, description) => {
@@ -148,16 +164,16 @@ class BookGenerator {
         return content;
     }
 
-    generatePage(page, config) {
+    generatePage(page, config, allPages, index) {
         let htmlContent = '';
-        
+
         // Traitement selon le type de page
         switch (page.metadata.type) {
             case 'cover':
                 htmlContent = this.generateCoverPage(page, config);
                 break;
             case 'sommaire':
-                htmlContent = this.generateSommairePage(config);
+                htmlContent = this.generateSommairePage(config, allPages);
                 break;
             case 'end':
                 htmlContent = this.generateEndPage(page, config);
@@ -191,17 +207,23 @@ class BookGenerator {
             </div>`;
     }
 
-    generateSommairePage(config) {
-        // Ici, on pourrait auto-générer le sommaire basé sur les pages
+    generateSommairePage(config, pages) {
+        const links = [];
+        let num = 1;
+        pages.forEach((p, idx) => {
+            if (p.metadata.type === 'content') {
+                const title = this.processTemplate(p.metadata.title || '', config);
+                const label = num === 1 ? `<strong>${title.toUpperCase()}</strong>` : `${num - 1}. <strong>${title}</strong>`;
+                links.push(`<div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(${idx})">${label}</div>`);
+                num++;
+            }
+        });
         return `
             <div class="page" role="article" aria-label="Sommaire du livre">
                 <div class="page-content">
                     <h2>SOMMAIRE</h2>
                     <nav role="navigation" aria-label="Navigation du sommaire">
-                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(2)"><strong>PRÉFACE</strong></div>
-                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(3)">1. <strong>INTRODUCTION</strong></div>
-                        <div style="cursor: pointer; padding: 0.4rem 0; transition: all 0.3s ease; font-size: 0.95rem;" onclick="goToPage(4)">2. <strong>VISION ET MISSION</strong></div>
-                        <!-- Auto-généré basé sur les pages -->
+                        ${links.join('\n')}
                     </nav>
                 </div>
             </div>`;
@@ -285,10 +307,11 @@ class BookGenerator {
             // Chargement des données
             const config = await this.loadConfig();
             const pages = await this.loadContent();
+            this.validatePages(pages);
             const template = await this.loadTemplate();
 
             // Génération des pages HTML
-            const pagesHtml = pages.map(page => this.generatePage(page, config)).join('\n');
+            const pagesHtml = pages.map((p, idx) => this.generatePage(p, config, pages, idx)).join('\n');
 
             // Chargement du CSS et JS du fichier original
             const originalHtml = await this.loadOriginalHtml();
@@ -310,6 +333,10 @@ class BookGenerator {
 
             // Copie des médias
             await this.copyMedia();
+
+            if (config.pack_output) {
+                await this.packageOutput();
+            }
 
             console.log(chalk.green('✅ Livre généré avec succès!'));
             console.log(chalk.cyan(`📁 Fichier de sortie: ${outputFile}`));
@@ -405,20 +432,37 @@ class BookGenerator {
 
     async copyMedia() {
         const outputMediaPath = path.join(this.outputPath, 'media');
-        const originalMediaPath = path.join(__dirname, '..');
-        
         await fs.ensureDir(outputMediaPath);
-        
-        // Copier les médias existants
-        const mediaFiles = ['01.jpg', 'FilmInstitutionnel.mp4'];
-        for (const file of mediaFiles) {
-            const srcPath = path.join(originalMediaPath, file);
-            const destPath = path.join(this.outputPath, file);
-            
-            if (await fs.pathExists(srcPath)) {
-                await fs.copy(srcPath, destPath);
-                console.log(chalk.green(`✓ Copié: ${file}`));
+
+        // Copier tout le dossier media de la configuration
+        if (await fs.pathExists(this.mediaPath)) {
+            await fs.copy(this.mediaPath, outputMediaPath);
+            console.log(chalk.green('✓ Médias copiés'));
+        }
+
+        // Compatibilité : copier aussi les médias à la racine si présents
+        const rootMedia = ['01.jpg', 'FilmInstitutionnel.mp4'];
+        for (const file of rootMedia) {
+            const src = path.join(__dirname, '..', file);
+            const dest = path.join(this.outputPath, file);
+            if (await fs.pathExists(src)) {
+                await fs.copy(src, dest);
             }
+        }
+    }
+
+    async packageOutput() {
+        const archive = path.join(this.outputPath, 'livre.tar.gz');
+        try {
+            await fs.remove(archive);
+            await new Promise((resolve, reject) => {
+                const { spawn } = require('child_process');
+                const tar = spawn('tar', ['-czf', archive, '-C', this.outputPath, '.']);
+                tar.on('close', code => code === 0 ? resolve() : reject(new Error(`tar exit ${code}`)));
+            });
+            console.log(chalk.green(`✓ Archive créée: ${archive}`));
+        } catch (err) {
+            console.log(chalk.yellow('⚠️  Impossible de créer l\'archive'));
         }
     }
 }
