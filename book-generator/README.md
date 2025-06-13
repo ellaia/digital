@@ -310,3 +310,12 @@ npm run build-safe
 # Voir les logs détaillés
 npm run help
 ```
+## ✏️ Interface d'édition rapide
+
+```bash
+npm install        # first time
+npm run editor     # open http://localhost:3000/editor
+```
+
+Les modifications sauvegardées via l'interface mettent à jour `config/content/pages.md` et les fichiers du dossier `config/content/media/`.
+
