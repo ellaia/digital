@@ -157,10 +157,13 @@ title: SOMMAIRE
 ```bash
 npm run build          # Générer le livre (avec sauvegarde automatique)
 npm run build-safe     # Générer le livre (sans sauvegarde automatique)
-npm run dev            # Mode développement (futur)
+npm run dev            # Lancer en mode watch
 npm run clean          # Nettoyer le dossier output
 npm run help           # Aide
 ```
+
+Le mode `dev` surveille `config/` et `config/content/` et régénère
+automatiquement le livre à chaque modification.
 
 ### 💾 Système de sauvegarde
 ```bash

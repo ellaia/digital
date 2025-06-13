@@ -5,6 +5,7 @@ const path = require('path');
 const marked = require('marked');
 const Mustache = require('mustache');
 const chalk = require('chalk');
+const chokidar = require('chokidar');
 const BackupManager = require('./backup-manager');
 
 class BookGenerator {
@@ -459,13 +460,36 @@ Exemples:
         process.exit(0);
     }
 
-    // Vérifier si on doit ignorer la sauvegarde
+    // Vérifier les options
     const skipBackup = args.includes('--no-backup');
+    const watchMode = args.includes('--watch');
 
-    generator.generate(skipBackup).catch(error => {
-        console.error(chalk.red('Erreur fatale:'), error);
-        process.exit(1);
-    });
+    const run = () => {
+        generator.generate(skipBackup).catch(error => {
+            console.error(chalk.red('Erreur fatale:'), error);
+        });
+    };
+
+    if (watchMode) {
+        console.log(chalk.blue('🔄 Mode watch activé, en attente de modifications...'));
+        run();
+
+        const watcher = chokidar.watch([
+            path.join(__dirname, 'config'),
+            path.join(__dirname, 'config', 'content')
+        ], { ignoreInitial: true });
+
+        let timer;
+        watcher.on('all', () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                console.log(chalk.blue('🔄 Changements détectés, régénération...'));
+                run();
+            }, 300);
+        });
+    } else {
+        run();
+    }
 }
 
 module.exports = BookGenerator;
