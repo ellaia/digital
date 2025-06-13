@@ -42,5 +42,6 @@
     "show_cover": true,
     "show_end_page": true,
     "auto_generate_sommaire": true
-  }
+  },
+  "pack_output": false
 }
