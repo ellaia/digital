@@ -19,6 +19,7 @@
     </p>
     <button type="submit">Save</button>
   </form>
+  <div id="status" style="margin-top:10px"></div>
   <script>
     fetch('/editor?raw=1')
       .then(r => r.text())
@@ -34,6 +35,28 @@
           container.appendChild(div);
         });
       });
+
+    const form = document.getElementById('editorForm');
+    const status = document.getElementById('status');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      status.textContent = 'Saving...';
+      status.style.color = 'black';
+      const formData = new FormData(form);
+      fetch('/editor', { method: 'POST', body: formData })
+        .then(res => {
+          if (res.ok) {
+            status.textContent = 'Content saved';
+            status.style.color = 'green';
+          } else {
+            return res.text().then(t => { throw new Error(t); });
+          }
+        })
+        .catch(err => {
+          status.textContent = 'Error: ' + err.message;
+          status.style.color = 'red';
+        });
+    });
   </script>
 </body>
 </html>
