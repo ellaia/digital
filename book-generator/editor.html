@@ -115,6 +115,9 @@ title: My title</pre>
 
     function parsePage(text) {
       const lines = text.split('\n');
+      while (lines.length && lines[0].trim() === '') {
+        lines.shift();
+      }
       let id = '', type = '', title = '';
       if (lines[0] && lines[0].startsWith('# Page:')) {
         id = lines.shift().replace('# Page:', '').trim();
