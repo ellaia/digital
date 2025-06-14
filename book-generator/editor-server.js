@@ -15,7 +15,14 @@ app.use(express.urlencoded({ extended: true }));
 
 const storage = multer.diskStorage({
   destination: mediaDir,
-  filename: (req, file, cb) => cb(null, file.originalname)
+  filename: (req, file, cb) => {
+    let safeName = path.basename(file.originalname);
+    if (safeName !== file.originalname || /[\\/]/.test(safeName)) {
+      return cb(new Error('Invalid filename'));
+    }
+    safeName = safeName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    cb(null, safeName);
+  }
 });
 const upload = multer({ storage });
 
