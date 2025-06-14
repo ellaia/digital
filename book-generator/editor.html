@@ -32,6 +32,16 @@
       font-family: var(--font-primary);
     }
 
+    input[type="text"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.5rem;
+      margin: 0.3rem 0;
+      border: 1px solid var(--tertiary-dark);
+      border-radius: 6px;
+      font-family: var(--font-primary);
+    }
+
     .nav-buttons {
       text-align: center;
       margin: 1rem 0;
@@ -70,6 +80,9 @@ title: My title</pre>
     <p>Separate pages using <code>---</code>.</p>
   </div>
   <form id="editorForm" method="POST" enctype="multipart/form-data">
+    <p><label>Page: <input id="pageId" type="text"></label></p>
+    <p><label>Type: <input id="pageType" type="text"></label></p>
+    <p><label>Title: <input id="pageTitle" type="text"></label></p>
     <textarea id="pageTextarea"></textarea>
     <div class="nav-buttons">
       <button type="button" id="prevBtn">&larr;</button>
@@ -92,13 +105,44 @@ title: My title</pre>
     let current = 0;
 
     const textarea = document.getElementById('pageTextarea');
+    const pageIdInput = document.getElementById('pageId');
+    const pageTypeInput = document.getElementById('pageType');
+    const pageTitleInput = document.getElementById('pageTitle');
     const pageNumber = document.getElementById('pageNumber');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const pageCountInput = document.getElementById('pageCount');
 
+    function parsePage(text) {
+      const lines = text.split('\n');
+      let id = '', type = '', title = '';
+      if (lines[0] && lines[0].startsWith('# Page:')) {
+        id = lines.shift().replace('# Page:', '').trim();
+      }
+      if (lines[0] && lines[0].startsWith('type:')) {
+        type = lines.shift().replace('type:', '').trim();
+      }
+      if (lines[0] && lines[0].startsWith('title:')) {
+        title = lines.shift().replace('title:', '').trim();
+      }
+      return { id, type, title, body: lines.join('\n') };
+    }
+
+    function buildPage() {
+      return [
+        `# Page: ${pageIdInput.value}`,
+        `type: ${pageTypeInput.value}`,
+        `title: ${pageTitleInput.value}`,
+        textarea.value
+      ].join('\n');
+    }
+
     if (window.initialPage) {
-      textarea.value = window.initialPage.page || '';
+      const parsed = parsePage(window.initialPage.page || '');
+      textarea.value = parsed.body || '';
+      pageIdInput.value = parsed.id || '';
+      pageTypeInput.value = parsed.type || '';
+      pageTitleInput.value = parsed.title || '';
       total = window.initialPage.total || 1;
       current = 0;
     }
@@ -113,13 +157,18 @@ title: My title</pre>
     async function loadPage(idx) {
       const res = await fetch(`/pages/${idx}`);
       const data = await res.json();
-      textarea.value = data.page || '';
+      const parsed = parsePage(data.page || '');
+      textarea.value = parsed.body || '';
+      pageIdInput.value = parsed.id || '';
+      pageTypeInput.value = parsed.type || '';
+      pageTitleInput.value = parsed.title || '';
       total = data.total;
       current = idx;
       updateIndicator();
     }
 
-    async function savePage(idx, content) {
+    async function savePage(idx) {
+      const content = buildPage();
       await fetch(`/pages/${idx}`, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
@@ -127,25 +176,22 @@ title: My title</pre>
       });
     }
 
-    if (!window.initialPage) {
-      loadPage(0);
-    } else {
-      updateIndicator();
-    }
+    updateIndicator();
+    loadPage(0);
 
     prevBtn.addEventListener('click', async () => {
-      await savePage(current, textarea.value);
+      await savePage(current);
       await loadPage(current - 1);
     });
 
     nextBtn.addEventListener('click', async () => {
-      await savePage(current, textarea.value);
+      await savePage(current);
       await loadPage(current + 1);
     });
 
     document.getElementById('editorForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      await savePage(current, textarea.value);
+      await savePage(current);
       const text = await fetch('/editor?raw=1').then(r => r.text());
       const sections = text ? text.split('\n---\n') : [''];
       pageCountInput.value = sections.length;
