@@ -20,6 +20,10 @@ book-generator/
 │   │   └── media/              # Images et vidéos
 │   └── themes/
 │       └── default.css         # Thèmes personnalisés (futur)
+├── gabarit/
+│   ├── index.html              # Gabarit HTML de référence
+│   ├── 01.jpg                  # Image de couverture par défaut
+│   └── FilmInstitutionnel.mp4  # Vidéo institutionnelle
 ├── templates/
 │   └── book-template.html      # Template HTML (auto-généré)
 ├── output/
@@ -29,7 +33,7 @@ book-generator/
 └── README.md
 ```
 
-Le générateur extrait les styles et scripts du fichier `livre_digital_cnra_stpageflip.html` situé à la racine du dépôt. Si ce fichier est absent, `index.html` est utilisé en repli. À défaut, un modèle interne minimal sera employé.
+Le générateur extrait les styles et scripts du fichier `gabarit/index.html` situé dans le dossier `book-generator`. S'il est absent, un modèle interne minimal sera employé.
 
 ## 🎯 Usage rapide
 
