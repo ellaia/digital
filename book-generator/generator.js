@@ -13,6 +13,10 @@ class BookGenerator {
         this.configPath = path.join(__dirname, 'config', 'book-config.json');
         this.contentPath = path.join(__dirname, 'config', 'content', 'pages.md');
         this.templatePath = path.join(__dirname, 'templates', 'book-template.html');
+        this.fallbackTemplatePath = path.join(__dirname, 'gabarit', 'index.html');
+        if (!fs.pathExistsSync(this.templatePath)) {
+            this.templatePath = this.fallbackTemplatePath;
+        }
         this.outputPath = path.join(__dirname, 'output');
         this.mediaPath = path.join(__dirname, 'config', 'content', 'media');
         this.backupManager = new BackupManager();
@@ -268,14 +272,23 @@ class BookGenerator {
     }
 
     async loadTemplate() {
-        try {
-            const template = await fs.readFile(this.templatePath, 'utf8');
+        const primary = this.templatePath;
+        const fallback = this.fallbackTemplatePath;
+
+        if (await fs.pathExists(primary)) {
+            const template = await fs.readFile(primary, 'utf8');
             console.log(chalk.green('✓ Template chargé'));
             return template;
-        } catch (error) {
-            console.error(chalk.red('✗ Template non trouvé, création d\'un template par défaut'));
-            return this.createDefaultTemplate();
         }
+
+        if (primary !== fallback && await fs.pathExists(fallback)) {
+            const template = await fs.readFile(fallback, 'utf8');
+            console.log(chalk.green('✓ Template chargé'));
+            return template;
+        }
+
+        console.error(chalk.red('✗ Template non trouvé, création d\'un template par défaut'));
+        return this.createDefaultTemplate();
     }
 
     createDefaultTemplate() {
