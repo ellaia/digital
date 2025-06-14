@@ -348,21 +348,14 @@ class BookGenerator {
     }
 
     async loadOriginalHtml() {
-        const originalPath = path.join(__dirname, '..', 'livre_digital_cnra_stpageflip.html');
-        const fallbackPath = path.join(__dirname, '..', 'index.html');
+        const filePath = path.join(__dirname, 'gabarit', 'index.html');
 
-        let fileToLoad = originalPath;
-        if (!await fs.pathExists(originalPath)) {
-            console.warn(chalk.yellow('⚠️  livre_digital_cnra_stpageflip.html introuvable, utilisation du fichier index.html'));
-            if (await fs.pathExists(fallbackPath)) {
-                fileToLoad = fallbackPath;
-            } else {
-                console.warn(chalk.yellow('⚠️  Aucun fichier HTML de base trouvé, utilisation d\'un modèle minimal'));
-                return this.createDefaultTemplate();
-            }
+        if (!await fs.pathExists(filePath)) {
+            console.warn(chalk.yellow('⚠️  gabarit/index.html introuvable, utilisation d\'un modèle minimal'));
+            return this.createDefaultTemplate();
         }
 
-        return await fs.readFile(fileToLoad, 'utf8');
+        return await fs.readFile(filePath, 'utf8');
     }
 
     extractStyles(html) {
@@ -440,10 +433,10 @@ class BookGenerator {
             console.log(chalk.green('✓ Médias copiés'));
         }
 
-        // Compatibilité : copier aussi les médias à la racine si présents
-        const rootMedia = ['01.jpg', 'FilmInstitutionnel.mp4'];
-        for (const file of rootMedia) {
-            const src = path.join(__dirname, '..', file);
+        // Compatibilité : copier aussi les médias du gabarit s'ils sont présents
+        const gabaritMedia = ['01.jpg', 'FilmInstitutionnel.mp4'];
+        for (const file of gabaritMedia) {
+            const src = path.join(__dirname, 'gabarit', file);
             const dest = path.join(this.outputPath, file);
             if (await fs.pathExists(src)) {
                 await fs.copy(src, dest);
