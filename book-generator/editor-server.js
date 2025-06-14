@@ -33,8 +33,40 @@ app.get('/editor', async (req, res) => {
     const data = await fs.readFile(pagesPath, 'utf8');
     return res.type('text/plain').send(data);
   }
+
   const htmlPath = path.join(__dirname, 'editor.html');
-  res.sendFile(htmlPath);
+  const configPath = path.join(__dirname, 'config', 'book-config.json');
+
+  try {
+    let html = await fs.readFile(htmlPath, 'utf8');
+    const config = await fs.readJSON(configPath).catch(() => ({}));
+    const theme = config.theme || {};
+
+    const data = await fs.readFile(pagesPath, 'utf8').catch(() => '');
+    const sections = data ? data.split('\n---\n') : [''];
+    const firstPage = sections[0] || '';
+
+    const replacements = {
+      '__PRIMARY_COLOR__': theme.primary_color || '#323e48',
+      '__SECONDARY_COLOR__': theme.secondary_color || '#638c1c',
+      '__TERTIARY_COLOR__': theme.tertiary_color || '#d8e0e5',
+      '__PRIMARY_LIGHT__': theme.primary_light || '#4a5660',
+      '__SECONDARY_LIGHT__': theme.secondary_light || '#7ba821',
+      '__TERTIARY_DARK__': theme.tertiary_dark || '#c1cdd4',
+      '__FONT_PRIMARY__': theme.font_primary || 'Poppins',
+      "'__FIRST_PAGE__'": JSON.stringify(firstPage),
+      '__TOTAL_PAGES__': sections.length
+    };
+
+    for (const [key, value] of Object.entries(replacements)) {
+      html = html.replace(new RegExp(key, 'g'), String(value));
+    }
+
+    res.type('text/html').send(html);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error loading editor');
+  }
 });
 
 app.post('/editor', upload.array('media'), async (req, res) => {

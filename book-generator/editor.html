@@ -5,13 +5,13 @@
   <title>Book Editor</title>
   <style>
     :root {
-      --primary-color: #323e48;
-      --secondary-color: #638c1c;
-      --tertiary-color: #d8e0e5;
-      --primary-light: #4a5660;
-      --secondary-light: #7ba821;
-      --tertiary-dark: #c1cdd4;
-      --font-primary: 'Poppins', Arial, sans-serif;
+      --primary-color: __PRIMARY_COLOR__;
+      --secondary-color: __SECONDARY_COLOR__;
+      --tertiary-color: __TERTIARY_COLOR__;
+      --primary-light: __PRIMARY_LIGHT__;
+      --secondary-light: __SECONDARY_LIGHT__;
+      --tertiary-dark: __TERTIARY_DARK__;
+      --font-primary: '__FONT_PRIMARY__', Arial, sans-serif;
     }
 
     body {
@@ -84,6 +84,9 @@ title: My title</pre>
     <button type="submit">Save</button>
     <button type="button" id="buildBtn">Build</button>
   </form>
+  <script id="initialData">
+    window.initialPage = { page: '__FIRST_PAGE__', total: __TOTAL_PAGES__ };
+  </script>
   <script>
     let total = 1;
     let current = 0;
@@ -93,6 +96,12 @@ title: My title</pre>
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const pageCountInput = document.getElementById('pageCount');
+
+    if (window.initialPage) {
+      textarea.value = window.initialPage.page || '';
+      total = window.initialPage.total || 1;
+      current = 0;
+    }
 
     function updateIndicator() {
       pageNumber.textContent = `Page ${current + 1} / ${total}`;
@@ -118,7 +127,11 @@ title: My title</pre>
       });
     }
 
-    loadPage(0);
+    if (!window.initialPage) {
+      loadPage(0);
+    } else {
+      updateIndicator();
+    }
 
     prevBtn.addEventListener('click', async () => {
       await savePage(current, textarea.value);
