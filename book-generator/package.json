@@ -13,7 +13,8 @@
     "backup-list": "node backup-manager.js list",
     "backup-restore": "node backup-manager.js restore",
     "backup-git": "node backup-manager.js git",
-    "editor": "node editor-server.js"
+    "editor": "node editor-server.js",
+    "test": "echo 'No tests yet'"
   },
   "dependencies": {
     "marked": "^9.1.6",

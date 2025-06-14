@@ -344,3 +344,17 @@ npm run editor     # open http://localhost:3000/editor
 
 Les modifications sauvegardées via l'interface mettent à jour `config/content/pages.md` et les fichiers du dossier `config/content/media/`. Pensez ensuite à relancer `npm run build` pour regénérer le livre.
 
+## 🧪 Tests
+
+Pour l'instant, aucun test automatisé n'est implémenté. La commande suivante affiche simplement un message :
+
+```bash
+npm test
+```
+
+Cela retournera :
+
+```bash
+No tests yet
+```
+
