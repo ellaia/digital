@@ -71,11 +71,15 @@ title: My title</pre>
   </div>
   <form id="editorForm" method="POST" enctype="multipart/form-data">
     <textarea id="pageTextarea"></textarea>
-    <div class="nav-buttons">
-      <button type="button" id="prevBtn">&larr;</button>
-      <span id="pageNumber"></span>
-      <button type="button" id="nextBtn">&rarr;</button>
-    </div>
+      <div class="nav-buttons">
+        <button type="button" id="prevBtn">&larr;</button>
+        <span id="pageNumber"></span>
+        <button type="button" id="nextBtn">&rarr;</button>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" id="addBtn">Add page</button>
+        <button type="button" id="deleteBtn">Delete page</button>
+      </div>
     <input type="hidden" id="pageCount" name="pageCount" value="0">
     <p>
       <label>Upload media: <input type="file" name="media" multiple></label>
@@ -91,6 +95,8 @@ title: My title</pre>
     const pageNumber = document.getElementById('pageNumber');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const addBtn = document.getElementById('addBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
     const pageCountInput = document.getElementById('pageCount');
 
     function render(idx) {
@@ -117,6 +123,27 @@ title: My title</pre>
     nextBtn.addEventListener('click', () => {
       sections[current] = textarea.value;
       render(current + 1);
+    });
+
+    addBtn.addEventListener('click', () => {
+      sections[current] = textarea.value;
+      sections.splice(current + 1, 0, '');
+      pageCountInput.value = sections.length;
+      render(current + 1);
+    });
+
+    deleteBtn.addEventListener('click', () => {
+      if (sections.length === 1) {
+        sections[0] = '';
+        render(0);
+        return;
+      }
+      sections.splice(current, 1);
+      if (current >= sections.length) {
+        current = sections.length - 1;
+      }
+      pageCountInput.value = sections.length;
+      render(current);
     });
 
     document.getElementById('editorForm').addEventListener('submit', () => {
