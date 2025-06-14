@@ -4,9 +4,59 @@
   <meta charset="UTF-8">
   <title>Book Editor</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    textarea { width: 100%; height: 200px; }
-    .page { margin-bottom: 20px; }
+    :root {
+      --primary-color: #323e48;
+      --secondary-color: #638c1c;
+      --tertiary-color: #d8e0e5;
+      --primary-light: #4a5660;
+      --secondary-light: #7ba821;
+      --tertiary-dark: #c1cdd4;
+      --font-primary: 'Poppins', Arial, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-primary);
+      background: linear-gradient(135deg, var(--tertiary-color) 0%, #e8eff2 100%);
+      margin: 0;
+      padding: 20px;
+      color: var(--primary-color);
+    }
+
+    textarea {
+      width: 100%;
+      height: 400px;
+      box-sizing: border-box;
+      padding: 1rem;
+      border: 1px solid var(--tertiary-dark);
+      border-radius: 8px;
+      font-family: var(--font-primary);
+    }
+
+    .nav-buttons {
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    .nav-buttons button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin: 0 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .nav-buttons button:hover {
+      background: var(--primary-light);
+    }
+
+    .nav-buttons button:disabled {
+      background: var(--tertiary-color);
+      color: var(--tertiary-dark);
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -20,7 +70,12 @@ title: My title</pre>
     <p>Separate pages using <code>---</code>.</p>
   </div>
   <form id="editorForm" method="POST" enctype="multipart/form-data">
-    <div id="pages"></div>
+    <textarea id="pageTextarea"></textarea>
+    <div class="nav-buttons">
+      <button type="button" id="prevBtn">&larr;</button>
+      <span id="pageNumber"></span>
+      <button type="button" id="nextBtn">&rarr;</button>
+    </div>
     <input type="hidden" id="pageCount" name="pageCount" value="0">
     <p>
       <label>Upload media: <input type="file" name="media" multiple></label>
@@ -29,20 +84,55 @@ title: My title</pre>
     <button type="button" id="buildBtn">Build</button>
   </form>
   <script>
+    let sections = [];
+    let current = 0;
+
+    const textarea = document.getElementById('pageTextarea');
+    const pageNumber = document.getElementById('pageNumber');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const pageCountInput = document.getElementById('pageCount');
+
+    function render(idx) {
+      textarea.value = sections[idx] || '';
+      pageNumber.textContent = `Page ${idx + 1} / ${sections.length}`;
+      prevBtn.disabled = idx === 0;
+      nextBtn.disabled = idx === sections.length - 1;
+      current = idx;
+    }
+
     fetch('/editor?raw=1')
       .then(r => r.text())
       .then(text => {
-        const sections = text.split('\n---\n');
-        document.getElementById('pageCount').value = sections.length;
-        const container = document.getElementById('pages');
-        sections.forEach((content, i) => {
-          const div = document.createElement('div');
-          div.className = 'page';
-          div.innerHTML = `<h3>Page ${i + 1}</h3>` +
-            `<textarea name="page${i}">${content}</textarea>`;
-          container.appendChild(div);
-        });
+        sections = text ? text.split('\n---\n') : [''];
+        pageCountInput.value = sections.length;
+        render(0);
       });
+
+    prevBtn.addEventListener('click', () => {
+      sections[current] = textarea.value;
+      render(current - 1);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      sections[current] = textarea.value;
+      render(current + 1);
+    });
+
+    document.getElementById('editorForm').addEventListener('submit', () => {
+      sections[current] = textarea.value;
+      pageCountInput.value = sections.length;
+      const form = document.getElementById('editorForm');
+      form.querySelectorAll('.hiddenPage').forEach(e => e.remove());
+      sections.forEach((content, i) => {
+        const t = document.createElement('textarea');
+        t.name = `page${i}`;
+        t.textContent = content;
+        t.style.display = 'none';
+        t.className = 'hiddenPage';
+        form.appendChild(t);
+      });
+    });
 
     document.getElementById('buildBtn').addEventListener('click', async () => {
       try {
