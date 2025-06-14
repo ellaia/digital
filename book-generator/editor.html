@@ -127,11 +127,8 @@ title: My title</pre>
       });
     }
 
-    if (!window.initialPage) {
-      loadPage(0);
-    } else {
-      updateIndicator();
-    }
+    updateIndicator();
+    loadPage(0);
 
     prevBtn.addEventListener('click', async () => {
       await savePage(current, textarea.value);
