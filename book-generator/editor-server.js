@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs-extra');
 const path = require('path');
 const multer = require('multer');
+const { spawn } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,6 +49,22 @@ app.post('/editor', upload.array('media'), async (req, res) => {
     console.error(err);
     res.status(500).send('Error saving content');
   }
+});
+
+app.post('/build', (req, res) => {
+  const flags = req.body.flags ? req.body.flags.split(/\s+/).filter(Boolean) : [];
+  const child = spawn('node', ['generator.js', ...flags], { cwd: __dirname });
+
+  child.stdout.on('data', data => process.stdout.write(data));
+  child.stderr.on('data', data => process.stderr.write(data));
+
+  child.on('close', code => {
+    if (code === 0) {
+      res.send('Build succeeded');
+    } else {
+      res.status(500).send('Build failed');
+    }
+  });
 });
 
 app.listen(PORT, () => {
