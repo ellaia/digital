@@ -14,24 +14,30 @@ npm install
 ```
 book-generator/
 ├── config/
-│   ├── book-config.json        # Configuration générale du livre
-│   ├── content/
-│   │   ├── pages.md            # Contenu des pages en Markdown
-│   │   └── media/              # Images et vidéos
-│   └── themes/
-│       └── default.css         # Thèmes personnalisés (futur)
+│   ├── book-config.json        # Configuration du livre
+│   └── content/
+│       ├── pages.md            # Contenu des pages en Markdown
+│       └── media/              # Images et vidéos
 ├── gabarit/
 │   ├── index.html              # Gabarit HTML de référence
 │   ├── 01.jpg                  # Image de couverture par défaut
 │   └── FilmInstitutionnel.mp4  # Vidéo institutionnelle
-├── templates/
-│   └── book-template.html      # Template HTML (auto-généré)
-├── output/
-│   └── livre.html             # Livre généré
 ├── generator.js               # Script principal
+├── backup-manager.js          # Gestion des sauvegardes
+├── editor-server.js           # Serveur de l'éditeur web
+├── editor.html                # Interface de l'éditeur
+├── output/                    # Dossier généré après build (non versionné)
+├── .gitignore
+├── package-lock.json
 ├── package.json
 └── README.md
 ```
+
+## 🛠 Scripts
+
+- **generator.js** – construit le livre. Il gère les sauvegardes automatiques et peut fonctionner en mode surveillance avec `npm run dev`.
+- **editor-server.js** – lance l'éditeur web accessible sur `http://localhost:3000/editor`.
+- **backup-manager.js** – outil de création, de liste et de restauration de sauvegardes.
 
 Le générateur extrait les styles et scripts du fichier `gabarit/index.html` situé dans le dossier `book-generator`. S'il est absent, un modèle interne minimal sera employé.
 
@@ -85,10 +91,25 @@ Lors de la génération, tout le dossier est copié automatiquement dans `output
 
 ### 4. Générer le livre
 ```bash
-npm run build
+npm run build       # sauvegarde automatique puis génération
+npm run build-safe  # génération sans créer de sauvegarde
 ```
 
-Le livre sera généré dans `output/livre.html`
+Le livre sera généré dans `output/livre.html`.
+
+### 5. Ouvrir l'éditeur (optionnel)
+```bash
+npm run editor      # accessible sur http://localhost:3000/editor
+```
+
+Enregistrer via l'éditeur met à jour `config/content/pages.md` et copie les médias dans `config/content/media/`. Après vos modifications, relancez `npm run build` pour mettre à jour `output/livre.html`.
+
+### 6. Gérer les sauvegardes
+```bash
+npm run backup "Avant modifications"  # créer une sauvegarde
+npm run backup-list                   # lister les sauvegardes
+npm run backup-restore <nom>          # restaurer une sauvegarde
+```
 
 ## 📝 Syntaxe Markdown étendue
 
@@ -321,5 +342,5 @@ npm install        # first time
 npm run editor     # open http://localhost:3000/editor
 ```
 
-Les modifications sauvegardées via l'interface mettent à jour `config/content/pages.md` et les fichiers du dossier `config/content/media/`.
+Les modifications sauvegardées via l'interface mettent à jour `config/content/pages.md` et les fichiers du dossier `config/content/media/`. Pensez ensuite à relancer `npm run build` pour regénérer le livre.
 
