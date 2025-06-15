@@ -108,8 +108,8 @@ app.post('/pages/:index', async (req, res) => {
     }
     const data = await fs.readFile(pagesPath, 'utf8').catch(() => '');
     let sections = data ? data.split('\n---\n') : [];
-    while (sections.length <= idx) {
-      sections.push('');
+    if (idx >= sections.length) {
+      return res.status(400).send('Index out of range');
     }
     sections[idx] = req.body || '';
     await fs.outputFile(pagesPath, sections.join('\n---\n'));
@@ -117,6 +117,26 @@ app.post('/pages/:index', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error saving content');
+  }
+});
+
+app.post('/pages/:index/insert', async (req, res) => {
+  try {
+    const idx = parseInt(req.params.index, 10);
+    if (isNaN(idx) || idx < 0) {
+      return res.status(400).send('Invalid index');
+    }
+    const data = await fs.readFile(pagesPath, 'utf8').catch(() => '');
+    let sections = data ? data.split('\n---\n') : [];
+    if (idx >= sections.length - 1) {
+      return res.status(400).send('Cannot insert after last page');
+    }
+    sections.splice(idx + 1, 0, '');
+    await fs.outputFile(pagesPath, sections.join('\n---\n'));
+    res.json({ success: true, total: sections.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error inserting page');
   }
 });
 

@@ -88,6 +88,7 @@ title: My title</pre>
       <button type="button" id="prevBtn">&larr;</button>
       <span id="pageNumber"></span>
       <button type="button" id="nextBtn">&rarr;</button>
+      <button type="button" id="addBtn">+</button>
     </div>
     <p>Use the arrows to flip through pages.</p>
     <input type="hidden" id="pageCount" name="pageCount" value="0">
@@ -111,10 +112,14 @@ title: My title</pre>
     const pageNumber = document.getElementById('pageNumber');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const addBtn = document.getElementById('addBtn');
     const pageCountInput = document.getElementById('pageCount');
 
     function parsePage(text) {
       const lines = text.split('\n');
+      while (lines.length && lines[0].trim() === '') {
+        lines.shift();
+      }
       let id = '', type = '', title = '';
       if (lines[0] && lines[0].startsWith('# Page:')) {
         id = lines.shift().replace('# Page:', '').trim();
@@ -151,11 +156,13 @@ title: My title</pre>
       pageNumber.textContent = `Page ${current + 1} / ${total}`;
       prevBtn.disabled = current === 0;
       nextBtn.disabled = current === total - 1;
+      addBtn.disabled = current === total - 1;
       pageCountInput.value = total;
     }
 
     async function loadPage(idx) {
       const res = await fetch(`/pages/${idx}`);
+      if (!res.ok) return;
       const data = await res.json();
       const parsed = parsePage(data.page || '');
       textarea.value = parsed.body || '';
@@ -186,6 +193,15 @@ title: My title</pre>
 
     nextBtn.addEventListener('click', async () => {
       await savePage(current);
+      await loadPage(current + 1);
+    });
+
+    addBtn.addEventListener('click', async () => {
+      if (current >= total - 1) return;
+      await savePage(current);
+      const res = await fetch(`/pages/${current}/insert`, { method: 'POST' });
+      const data = await res.json();
+      total = data.total;
       await loadPage(current + 1);
     });
 
