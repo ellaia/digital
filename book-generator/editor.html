@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Book Editor</title>
+  <title>Éditeur de Livre Digital</title>
   <style>
     :root {
       --primary-color: __PRIMARY_COLOR__;
@@ -20,6 +20,39 @@
       margin: 0;
       padding: 20px;
       color: var(--primary-color);
+    }
+
+    main {
+      display: flex;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    aside {
+      flex: 1 1 40%;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    aside pre {
+      background: #f5f5f5;
+      padding: 0.5rem;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+
+    aside code {
+      color: var(--secondary-color);
+      font-weight: bold;
+    }
+
+    form {
+      flex: 1 1 60%;
     }
 
     textarea {
@@ -70,33 +103,57 @@
   </style>
 </head>
 <body>
-  <h1>Book Editor</h1>
-  <div id="instructions">
-    <p>Start each page with headers like:</p>
-    <pre># Page: my-page
-type: content
-title: My title</pre>
-    <p>Insert media with <code>[IMAGE: file.jpg | description]</code> or <code>[VIDEO: file.mp4 | description]</code>.</p>
-    <p>Separate pages using <code>---</code>.</p>
-  </div>
-  <form id="editorForm" method="POST" enctype="multipart/form-data">
-    <p><label>Page: <input id="pageId" type="text"></label></p>
-    <p><label>Type: <input id="pageType" type="text"></label></p>
-    <p><label>Title: <input id="pageTitle" type="text"></label></p>
-    <textarea id="pageTextarea"></textarea>
-    <div class="nav-buttons">
-      <button type="button" id="prevBtn">&larr;</button>
-      <span id="pageNumber"></span>
-      <button type="button" id="nextBtn">&rarr;</button>
-    </div>
-    <p>Use the arrows to flip through pages.</p>
+  <h1 style="text-align:center;">Éditeur de Livre Digital</h1>
+  <main>
+    <form id="editorForm" method="POST" enctype="multipart/form-data">
+      <p><label>Page&nbsp;ID : <input id="pageId" type="text"></label></p>
+      <p><label>Type : <input id="pageType" type="text"></label></p>
+      <p><label>Titre : <input id="pageTitle" type="text"></label></p>
+      <textarea id="pageTextarea"></textarea>
+      <div class="nav-buttons">
+        <button type="button" id="prevBtn">&larr;</button>
+        <span id="pageNumber"></span>
+        <button type="button" id="nextBtn">&rarr;</button>
+      </div>
+      <p>Utilisez les flèches pour parcourir les pages.</p>
     <input type="hidden" id="pageCount" name="pageCount" value="0">
-    <p>
-      <label>Upload media: <input type="file" name="media" multiple></label>
-    </p>
-    <button type="submit">Save</button>
-    <button type="button" id="buildBtn">Build</button>
-  </form>
+      <p>
+        <label>Importer des médias : <input type="file" name="media" multiple></label>
+      </p>
+      <button type="submit">Enregistrer</button>
+      <button type="button" id="buildBtn">Générer</button>
+    </form>
+    <aside id="instructions">
+      <h2>Comment remplir votre page&nbsp;?</h2>
+      <p>Chaque page débute par trois lignes&nbsp;:</p>
+      <pre># Page: mon-id
+type: content
+title: Mon titre</pre>
+      <p>Séparez les pages avec <code>---</code>.</p>
+      <h3>Médias</h3>
+      <p>Insérer une image&nbsp;:</p>
+      <pre>[IMAGE: fichier.jpg | Description facultative]</pre>
+      <p>Insérer une vidéo&nbsp;:</p>
+      <pre>[VIDEO: video.mp4 | Description facultative]</pre>
+      <h3>Blocs avancés</h3>
+      <p>Timeline&nbsp;:</p>
+      <pre>[TIMELINE]
+2020 | Premier événement
+2021 | Deuxième événement
+[/TIMELINE]</pre>
+      <p>Citation&nbsp;:</p>
+      <pre>[QUOTE: "Votre citation" - Auteur]</pre>
+      <p>Placeholder d'image&nbsp;:</p>
+      <pre>[IMAGE: Description du visuel]</pre>
+      <p>Vous pouvez également utiliser les variables&nbsp;:</p>
+      <ul>
+        <li><code>{{book.title}}</code> – titre du livre</li>
+        <li><code>{{book.subtitle}}</code> – sous‑titre</li>
+        <li><code>{{book.institution}}</code> – institution</li>
+        <li><code>{{book.years}}</code> – années</li>
+      </ul>
+    </aside>
+  </main>
   <script id="initialData">
     window.initialPage = { page: '__FIRST_PAGE__', total: __TOTAL_PAGES__ };
   </script>
