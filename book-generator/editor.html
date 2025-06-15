@@ -100,6 +100,12 @@
       color: var(--tertiary-dark);
       cursor: not-allowed;
     }
+
+    .notice {
+      color: var(--secondary-color);
+      font-size: 0.9rem;
+      margin: 0.2rem 0 0.6rem;
+    }
   </style>
 </head>
 <body>
@@ -109,11 +115,13 @@
       <p><label>Page&nbsp;ID : <input id="pageId" type="text"></label></p>
       <p><label>Type : <input id="pageType" type="text"></label></p>
       <p><label>Titre : <input id="pageTitle" type="text"></label></p>
+      <p class="notice">ID, type et titre sont obligatoires pour créer une page.</p>
       <textarea id="pageTextarea"></textarea>
       <div class="nav-buttons">
         <button type="button" id="prevBtn">&larr;</button>
         <span id="pageNumber"></span>
         <button type="button" id="nextBtn">&rarr;</button>
+        <button type="button" id="addBtn">Ajouter</button>
       </div>
       <p>Utilisez les flèches pour parcourir les pages.</p>
     <input type="hidden" id="pageCount" name="pageCount" value="0">
@@ -129,6 +137,7 @@
       <pre># Page: mon-id
 type: content
 title: Mon titre</pre>
+      <p>Ces trois lignes sont requises pour toute nouvelle page.</p>
       <p>Séparez les pages avec <code>---</code>.</p>
       <h3>Markdown de base</h3>
       <p>Titre et sous‑titre&nbsp;:</p>
@@ -168,6 +177,7 @@ title: Mon titre</pre>
   <script>
     let total = 1;
     let current = 0;
+    let currentType = '';
 
     const textarea = document.getElementById('pageTextarea');
     const pageIdInput = document.getElementById('pageId');
@@ -176,6 +186,7 @@ title: Mon titre</pre>
     const pageNumber = document.getElementById('pageNumber');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const addBtn = document.getElementById('addBtn');
     const pageCountInput = document.getElementById('pageCount');
 
     function parsePage(text) {
@@ -213,12 +224,14 @@ title: Mon titre</pre>
       pageTitleInput.value = parsed.title || '';
       total = window.initialPage.total || 1;
       current = 0;
+      currentType = parsed.type || '';
     }
 
     function updateIndicator() {
       pageNumber.textContent = `Page ${current + 1} / ${total}`;
       prevBtn.disabled = current === 0;
       nextBtn.disabled = current === total - 1;
+      addBtn.disabled = current === total - 1 || currentType === 'end';
       pageCountInput.value = total;
     }
 
@@ -232,6 +245,7 @@ title: Mon titre</pre>
       pageTitleInput.value = parsed.title || '';
       total = data.total;
       current = idx;
+      currentType = parsed.type || '';
       updateIndicator();
     }
 
@@ -255,6 +269,27 @@ title: Mon titre</pre>
     nextBtn.addEventListener('click', async () => {
       await savePage(current);
       await loadPage(current + 1);
+    });
+
+    addBtn.addEventListener('click', async () => {
+      if (!pageIdInput.value.trim() || !pageTypeInput.value.trim() || !pageTitleInput.value.trim()) {
+        alert('ID, type et titre requis');
+        return;
+      }
+      await savePage(current);
+      const content = buildPage();
+      const res = await fetch(`/pages/${current}/insert`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: content
+      });
+      if (res.ok) {
+        const data = await res.json();
+        total = data.total;
+        await loadPage(data.index);
+      } else {
+        alert('Insertion échouée');
+      }
     });
 
     document.getElementById('editorForm').addEventListener('submit', async (e) => {

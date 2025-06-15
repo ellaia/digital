@@ -28,6 +28,22 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+function parseMeta(text) {
+  const lines = text.split('\n').map(l => l.trim());
+  while (lines.length && lines[0] === '') lines.shift();
+  let id = '', type = '', title = '';
+  if (lines[0] && lines[0].toLowerCase().startsWith('# page:')) {
+    id = lines.shift().replace(/# page:/i, '').trim();
+  }
+  if (lines[0] && lines[0].toLowerCase().startsWith('type:')) {
+    type = lines.shift().replace(/type:/i, '').trim();
+  }
+  if (lines[0] && lines[0].toLowerCase().startsWith('title:')) {
+    title = lines.shift().replace(/title:/i, '').trim();
+  }
+  return { id, type, title };
+}
+
 app.get('/editor', async (req, res) => {
   if (req.query.raw) {
     const data = await fs.readFile(pagesPath, 'utf8');
@@ -117,6 +133,35 @@ app.post('/pages/:index', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error saving content');
+  }
+});
+
+app.post('/pages/:index/insert', async (req, res) => {
+  try {
+    const idx = parseInt(req.params.index, 10);
+    if (isNaN(idx) || idx < 0) {
+      return res.status(400).send('Invalid index');
+    }
+
+    const newPage = String(req.body || '');
+    const meta = parseMeta(newPage);
+    if (!meta.id || !meta.type || !meta.title) {
+      return res.status(400).send('Missing metadata');
+    }
+
+    const data = await fs.readFile(pagesPath, 'utf8').catch(() => '');
+    let sections = data ? data.split('\n---\n') : [];
+    const current = sections[idx];
+    if (idx === sections.length - 1 && current && parseMeta(current).type === 'end') {
+      return res.status(400).send('Cannot insert after end page');
+    }
+
+    sections.splice(idx + 1, 0, newPage);
+    await fs.outputFile(pagesPath, sections.join('\n---\n'));
+    res.json({ index: idx + 1, total: sections.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error inserting page');
   }
 });
 
