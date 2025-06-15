@@ -111,6 +111,24 @@ npm run backup-list                   # lister les sauvegardes
 npm run backup-restore <nom>          # restaurer une sauvegarde
 ```
 
+## Markdown de base
+
+### Titres
+```markdown
+# Titre
+## Sous-titre
+```
+
+### Texte en gras
+```markdown
+**texte en gras**
+```
+
+### Texte en italique
+```markdown
+*texte en italique*
+```
+
 ## 📝 Syntaxe Markdown étendue
 
 ### Images
